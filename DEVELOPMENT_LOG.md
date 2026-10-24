@@ -66,9 +66,9 @@ Next stage: Stage 1 responsive movement. Not started.
 
 Date: 24 October 2026 (Asia/Singapore).
 
-Stage and status: In progress; local checks passed, hosted checkpoint pending.
+Stage and status: Complete. Local model/input checks and hosted movement checks passed. Subjective control tuning and physical-device testing remain in the improvements backlog.
 
-Source commit: Pending Stage 1 checkpoint. Public Site identity and audience are preserved.
+Deployed source commit: `a18417222516c6d0e5e09c3700a06da993e348ce`. Public Site identity and audience are preserved. Sites version **3**, saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_cf4f5be64c148191ac09bb8f8daea04e`, deployment ID `appgdep_6adc8263197c8191927f5b180ec53f0d`. URL: https://career-catcher-fungame.tenderstoat19.chatgpt.site
 
 What changed: Five logical lanes, a standing graduate intern carrying a laptop, visible catch zone, keyboard and pointer controls, held-input repeat, edge clamping, explicit pause/resume, focus-loss pause, and clean reset. Movement uses 110 ms transitions and 180 ms held repeat in fixed 640 × 420 world coordinates.
 
@@ -82,9 +82,25 @@ Checks completed and evidence:
 - A stale screen-reader pause message discovered during browser QA was fixed and rechecked after resume.
 - At 375 × 667 CSS pixels, the ready action remained visible and active direction buttons measured 50 pixels high below the character, with no horizontal overflow.
 - Independent integration review found no remaining concrete blocker.
+- The combined 19 model/routing tests passed before source packaging. The source was saved and deployed as public Sites version 3.
+- In the hosted in-app view at 375 × 667, Start and a right-button press reached lane 4, direction controls remained 50 pixels high, and document width matched the viewport. Pause/resume and reset passed with no captured warnings or errors.
 
 Known issues and unverified items: Physical phone touch/multi-touch cancellation and subjective control comfort still need human playtest feedback. No falling items or score have been added.
 
 What to try: Tap and hold each direction; reverse quickly; press against edges; pause or leave focus and resume; resize and reset.
 
-Next stage: Stage 2 catch, dodge, and retry, after the Stage 1 hosted checks.
+Next stage: Stage 2 catch, dodge, and retry, followed by Stage 3 complete career.
+
+## MVP continuation after app restart
+
+The user has authorized proceeding through subsequent stages without approval, with a newer constraint to prioritize the complete playable MVP and defer time-consuming details. Track deferred work in [IMPROVEMENTS.md](IMPROVEMENTS.md). No Stage 2 implementation has started at this checkpoint.
+
+Resume with a timed catch-and-dodge loop, then all eight engineering ranks, reputation gates and demotion, CEO/dismissal/contract-review endings, and clean retry. Keep essential readable feedback and fair basic spawns; defer richer art, sound, expanded jokes, detailed tuning, personal best, fresh-player sessions, and judge-release preparation until the MVP is playable.
+
+Recommended next architecture: add `src/rules.js` and `src/simulation.js`; simulation owns phase, the existing movement model, active time, spawn/items, score, reputation, grace, and career state. Main forwards input and presents snapshots/events rather than keeping a second authoritative phase/clock. Keep current flattened movement fields in snapshots so the renderer can extend to falling objects. Use a shared `createSimulation({seed})` API with start/reset/pause/resume/press/release/clearInput/update/snapshot/drainEvents.
+
+Important functional cases: unique collision processing; swept collision must overlap in the same time interval on both axes; hazard and coffee batch arithmetic clamps once; 1.5-second grace; truncate the final step at contract time; zero reputation resolves before promotion; at most one promotion per step; demotion resets progress and restores reputation to 45; CEO on the valid final step beats timeout. Controlled QA scenarios must stay outside the public interface.
+
+Existing input tests use a small isolated VM/DOM harness in `scripts/test-controls.mjs` linked to the real movement module. Update the harness when main imports simulation. The renderer imports movement geometry and exposes `render(model)`. All assets are local and the static preparation script checks the complete package.
+
+The user is restarting ChatGPT after granting screen-recording/audio permissions. Resume from the repository and the existing Site ID; obtain fresh source credentials when needed. Do not create a second Site. Source branch remains `codex/stage-0-foundation`.

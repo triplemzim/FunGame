@@ -19,7 +19,7 @@ Statuses: **Not started → In progress → Ready for playtest → Complete**. U
 | Stage | Playable checkpoint | Main question | Status |
 | --- | --- | --- | --- |
 | 0 — Foundation and Sites | Tech-office shell with working start/reset | Can we open the intended game surface? | Complete |
-| 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | In progress |
+| 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | Complete |
 | 2 — Catch and dodge | Basic timed arcade run with retry | Are catches satisfying and hazards understandable? | Not started |
 | 3 — Complete career | All ranks, consequences, and endings | Can the whole game run correctly? | Not started |
 | 4 — Fairness and pacing | Balanced, repeatable three-minute challenge | Is success earned and another attempt appealing? | Not started |
@@ -269,4 +269,4 @@ Feedback to address:
 Next stage:
 ```
 
-Implementation status: Stage 0 is complete. Stage 1 is in progress; the user has authorized continuing through later stages without another approval gate. See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence.
+Implementation status: Stages 0 and 1 are complete. The user authorized continuing without another approval gate, then requested an MVP-first pass. Next implement the Stage 2 arcade loop and Stage 3 full career; deferred polish is tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md). See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence and restart notes.
