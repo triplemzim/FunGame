@@ -110,7 +110,7 @@ The user is restarting ChatGPT after granting screen-recording/audio permissions
 
 Date: 24 October 2026 (Asia/Singapore).
 
-Stage and status: In progress; functional model and UI are integrated, deployment pending.
+Stage and status: Complete for the MVP scope. Functional tests and public hosted checks passed; human refinement remains deferred.
 
 The user requested an MVP-first pass with continued work and no new approval gate. Stages 2 and 3 are implemented together to reach a complete run before deferred presentation work. The progression-disabled module scenario verifies the Stage 2 Intern loop separately; the public interface uses the complete career.
 
@@ -130,4 +130,12 @@ Known issues and unverified items: Physical touch interruption and human comfort
 
 Additional browser results: A normal run reached dismissal at 148.9 active seconds with 360 points, 6 incidents, one demotion, highest rank Junior Software Engineer, and final rank Intern. The phone results screen displayed those values with a prominent usable Retry. Retry reset the visible clock to 3:00, points to zero, and trust to 100. Five subsequent Start/Reset cycles preserved one canvas and a clean ready screen. CEO and contract review were reached in controlled simulation/UI tests; natural CEO feasibility was checked by the seeded input bot.
 
-Next: publish the same public Site and record its source/version checkpoint. Detailed refinement remains deferred under the MVP-first instruction.
+Source checkpoint: `8aa3799b533e90c851031557e8e642719b82c50a`, pushed to GitHub `codex/stage-0-foundation` and the Sites-managed source. All 38 current functional checks passed before the source helper committed and packaged the release.
+
+Public release: Sites version **4**. Saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_e90c607d2e9481918e39809455b1144a`; deployment ID `appgdep_6adc8599716c8191a3bdda80d8e871d1`. Deployment succeeded at https://career-catcher-fungame.tenderstoat19.chatgpt.site. Audience remains public. Version 3 and the earlier source checkpoint are retained for rollback.
+
+Hosted verification: The Site opened without sign-in. At 375 × 667, the direction buttons measured 50 pixels high and Pause measured 44 pixels high at the top of the playfield; no horizontal overflow was observed. A hosted normal run caught rewards and reached 90 points, then promoted to Junior Software Engineer later in that run. Keyboard movement, Pause/Resume, viewport resize, and clean reset passed. The paused clock stayed at 2:35 through resize. A 1280 × 850 viewport also rendered the full game correctly. No captured browser warnings/errors occurred. Anonymous HTTPS requests returned HTTP 200 and the correct MIME types for all eight static files.
+
+What to try: Start First Day; catch green builds and coffee, dodge coral bugs; fill the promotion bar while retaining 40 trust; pause and resume; reach an ending and retry. All three ending/rule paths were verified in controlled tests. A normal browser dismissal and normal seeded-bot CEO outcomes were observed separately; no fresh-player enjoyment claim is made.
+
+Next: User play of the complete MVP. Stage 4–7 refinement, sound, additional variants, broader playtesting, and release preparation remain deferred under the latest MVP-first instruction and are tracked in IMPROVEMENTS.md.
