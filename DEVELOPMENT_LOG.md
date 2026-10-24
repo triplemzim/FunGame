@@ -145,7 +145,7 @@ Next: User play of the complete MVP. Stage 4–7 refinement, sound, additional v
 
 Date: 24 October 2026 (Asia/Singapore).
 
-Stage and status: In progress; automated baseline, path-guard implementation, and post-change measurements passed. Hosted checkpoint pending. Human comfort and perceived fairness remain playtest gaps.
+Stage and status: Needs fixes for player engagement. Automated baseline, path-guard implementation, post-change measurements, and hosted technical checks passed. Human comfort and perceived fairness remain playtest gaps. The player reported that the three repeating item types feel boring; automated feasibility does not establish enjoyment.
 
 What changed: Replaced the impact-neighborhood/destination heuristic with conservative direct escape and coffee-catch checks. Independent movement clones preserve held input, repeat timers, and in-flight transitions. Shared swept collision checks the full reaction, transit, and waiting path. No scoring, movement speed, spawn-rate, fall-speed, or promotion target values changed.
 
@@ -162,6 +162,30 @@ Checks and measured evidence:
 
 Selected tuning: Retain 110 ms lane transitions, 180 ms held repeat, existing rank targets and spawn/fall settings; placement uses a 250 ms reaction margin. Exact-geometry bot promotions are faster than the directional human targets, so those targets are not marked passed and are not used alone to justify raising difficulty.
 
-Known limitations: Direct-path rejection is conservative, not an exhaustive planner; rejected hazard/coffee candidates may become rewards. Physical touch comfort, human pacing, and whether players can explain their hits remain unverified. Presentation/audio work stays deferred.
+Known limitations: Direct-path rejection is conservative, not an exhaustive planner; rejected hazard/coffee candidates may become rewards. Physical touch comfort, human pacing, and whether players can explain their hits remain unverified. Sound is now being added at the player’s request; richer presentation remains deferred.
 
-Next: Publish and verify the same public Site, then collect player feedback on movement and perceived fairness.
+Source checkpoint: `77dcb174b20a5224b70e0ea72d37377f7518dcfd`, pushed to GitHub `codex/stage-0-foundation` and the Sites-managed source. Public Sites version **5**, saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_00201f29b41c819189ac6e5e3eadf43c`, deployment ID `appgdep_6adc89e95d188191ba442b99583f5213`. Deployment succeeded at https://career-catcher-fungame.tenderstoat19.chatgpt.site. Audience remains public.
+
+Hosted verification: Ready, Start, active play, catches, and a promotion were observed. No captured browser warnings/errors occurred. The fairness change preserves the existing visible controls and rules; this version still has no sound.
+
+Player feedback: Three repeating categories feel boring. The player suggested three missed good items causing a popup and demotion, and requested sound. Sound is the immediate change. Miss penalties, an earned Debug action, short release events, and meaningful pickups are tracked as proposals in IMPROVEMENTS.md. Misses remain harmless in the current rules; no untested automatic demotion rule was added.
+
+Next: Deliver sound, then refine engagement using the recorded player feedback.
+
+
+## Stage 5 Event sounds — partial checkpoint
+
+Date: 24 October 2026 (Asia/Singapore).
+
+Stage and status: In progress. Sound implementation and local checks passed; public sound release pending. Other Stage 5 presentation work remains deferred.
+
+What changed: Short synthesized cues for build catches, coffee, bug hits, promotions, demotions, and the three endings. Promotion uses a rising fanfare; bug hits use a low descending tone. Major events take priority over routine catches. A visible Sound On/Off button remembers the preference. Audio starts only after a Start/Resume/unmute gesture; pause, reset, and mute stop current notes. No remote audio assets or additional dependencies are required.
+
+Checks and evidence:
+
+- Nine audio tests passed for lazy gesture unlock, persisted mute, immediate stop, unavailable or suspended contexts, blocked storage, cue priority, distinct event/ending variants, voice cleanup, and harmless failures.
+- Eleven existing UI/input checks passed after audio integration. Alongside the unchanged 11 movement, 16 simulation, and eight fairness checks, 55 current functional checks have passed.
+- Browser preview reported AudioContext running after Start. Native clicks on Sound Off and Sound On kept the phase playing, with audio state changing to muted and running respectively. A focus issue found during QA was fixed before packaging.
+- Mute persisted through reload; the QA preference was restored to unmuted. No captured browser warnings/errors occurred. These are browser audio activation checks, not a claim about hardware speaker volume.
+
+What to try: Start with Sound On, catch a build, catch a bug, and earn a promotion. Toggle Sound Off during play and reload to check the saved preference. Missing builds or coffee still has no penalty.

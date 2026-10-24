@@ -22,6 +22,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid #7771d6; outline-offs
 .brand-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid var(--ink); border-radius: 11px; background: var(--lime); font-size: 31px; line-height: 1; box-shadow: 2px 2px 0 var(--ink); }
 .brand-caption { display: block; font-size: 8px; letter-spacing: 1.4px; font-weight: 650; margin-top: 5px; color: #74758a; }
 .preview-badge { padding: 7px 11px; border: 1px solid #d4d1df; border-radius: 20px; color: #6c6d81; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.brand-tools { display: flex; align-items: center; gap: 10px; }
+.sound-button { min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--ink); border-radius: 9px; background: #faf9f6; color: var(--ink); font-size: 11px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+.sound-button[aria-pressed="true"] { color: #776d82; background: #e5dfed; }
+.sound-button:disabled { cursor: default; opacity: .7; }
 .game-card { overflow: hidden; border: 2px solid var(--ink); border-radius: 18px; background: #faf9f6; box-shadow: 0 6px 0 #d5d2e0, 0 20px 45px #22253e0b; }
 .cabinet-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 25px; background: var(--ink); color: #efedf8; }
 .floor-label { display: flex; align-items: center; gap: 9px; font-size: 9px; font-weight: 750; letter-spacing: 1.4px; white-space: nowrap; }
@@ -120,6 +124,7 @@ body[data-state="paused"] .status-dot { background: #e5ca8f; box-shadow: 0 0 0 3
 }
 
 @media (max-width: 640px) {
+  .brand-tools .preview-badge { display: none; }
   .app-shell { width: calc(100% - 28px); margin: 17px auto 18px; }
   .brand-header { margin-bottom: 15px; gap: 8px; }
   .brand { gap: 9px; font-size: 12px; letter-spacing: -.25px; }

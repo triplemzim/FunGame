@@ -7,7 +7,7 @@ if (!vm.SourceTextModule) {
   throw new Error('Run with: node --experimental-vm-modules --test scripts/test-controls.mjs');
 }
 
-const [mainSource, movementSource, html, simulationSource, rulesSource, collisionSource, fairnessSource] = await Promise.all([
+const [mainSource, movementSource, html, simulationSource, rulesSource, collisionSource, fairnessSource, audioSource] = await Promise.all([
   readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/movement.js', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
@@ -15,6 +15,7 @@ const [mainSource, movementSource, html, simulationSource, rulesSource, collisio
   readFile(new URL('../src/rules.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/collision.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/fairness.js', import.meta.url), 'utf8'),
+  readFile(new URL('../src/audio.js', import.meta.url), 'utf8'),
 ]);
 
 // Only the event, focus, and capture methods consumed by main.js are modeled.
@@ -74,6 +75,7 @@ async function playground({ initialState = null } = {}) {
     requestAnimationFrame(callback) { frames.push(callback); return frames.length; },
   });
   const movement = new vm.SourceTextModule(movementSource, { context, identifier: 'movement.js' });
+  const audio = new vm.SourceTextModule(audioSource, { context, identifier: 'audio.js' });
   const collision = new vm.SourceTextModule(collisionSource, { context, identifier: 'collision.js' });
   const fairness = new vm.SourceTextModule(fairnessSource, { context, identifier: 'fairness.js' });
   const rules = new vm.SourceTextModule(rulesSource, { context, identifier: 'rules.js' });
@@ -90,6 +92,7 @@ async function playground({ initialState = null } = {}) {
     if (specifier === './rules.js') return rules;
     if (specifier === './collision.js') return collision;
     if (specifier === './fairness.js') return fairness;
+    if (specifier === './audio.js') return audio;
     throw new Error(`Unexpected main.js dependency: ${specifier}`);
   };
   await main.link(link);

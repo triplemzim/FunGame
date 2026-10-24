@@ -2,7 +2,7 @@
 
 A three-minute tech-office arcade game. Start as a fresh CS graduate, catch green CI builds, avoid production bugs, recover team trust with coffee, and climb through eight ranks to CEO. Losing all trust demotes you; losing it as an Intern ends the run. The contract review ends any run still active after three minutes.
 
-Play the [public MVP](https://career-catcher-fungame.tenderstoat19.chatgpt.site). The first complete MVP includes the catch/dodge loop, promotions and demotions, all three endings, keyboard and pointer controls, pause, and immediate retry. Richer artwork, sound, extra item variants, detailed balancing, and broader playtesting are tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md).
+Play the [public MVP](https://career-catcher-fungame.tenderstoat19.chatgpt.site). The first complete MVP includes the catch/dodge loop, promotions and demotions, all three endings, keyboard and pointer controls, pause, and immediate retry. Richer artwork, extra item variants, detailed balancing, and broader playtesting are tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md).
 
 ## Build and preview
 
@@ -23,14 +23,15 @@ The preparation script recreates `dist/` from `index.html`, `src/`, and any loca
 2. Catch green checkmarks with the outlined laptop for **30 points**. Coffee restores **12 team trust**; coral bugs cost **30**. Missing items has no penalty.
 3. Fill the next-promotion bar while keeping at least **40 trust**. At zero trust, lose one rank and regain 45 trust; at Intern, the run ends.
 4. Press Escape or **Pause**. Choose **Resume Work** to continue. Leaving focus pauses the contract and clears held input.
-5. Reach CEO, get dismissed, or finish the 180-second contract. Review the actual run stats and select **Try Another Career**.
+5. Use **Sound On/Off** to mute or unmute short event cues. The preference is remembered when browser storage is available. Audio begins on a user gesture.
+6. Reach CEO, get dismissed, or finish the 180-second contract. Review the actual run stats and select **Try Another Career**.
 
 Resize between laptop and narrow phone widths without changing the logical game rules. Touch buttons sit below the action. Current MVP item art uses three clear categories; additional software/agent variants come later.
 
 ## Functional checks
 
 ```sh
-node --experimental-vm-modules --test scripts/test-movement.mjs scripts/test-controls.mjs scripts/test-simulation.mjs scripts/test-fairness.mjs
+node --experimental-vm-modules --test scripts/test-movement.mjs scripts/test-controls.mjs scripts/test-simulation.mjs scripts/test-fairness.mjs scripts/test-audio.mjs
 ```
 
 Checks cover input timing/cancellation/focus, actual UI event routing and ending/retry presentation in an isolated DOM stub, and collision/career/clock rules. Simulation supports module-only initial-state scenarios for controlled QA; no development controls appear in the public interface. Browser and physical-device observations are recorded separately in the development log. The spawn guard uses independent copies of the real movement model to check reaction, transit, and waiting paths without relying on damage protection.

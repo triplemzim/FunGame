@@ -2,6 +2,7 @@ import { createOfficeShell } from './game.js';
 import { LANE_COUNT } from './movement.js';
 import { createSimulation } from './simulation.js';
 import { RANKS } from './rules.js';
+import { createAudio } from './audio.js';
 
 const find = (id) => document.getElementById(id);
 const setText = (id, value) => { const element = find(id); if (element.textContent !== String(value)) element.textContent = String(value); };
@@ -14,6 +15,8 @@ const resumeButton = find('resume-button');
 const retryButton = find('retry-button');
 const leftButton = find('move-left');
 const rightButton = find('move-right');
+const soundButton = find('sound-button');
+const audio = createAudio();
 const simulation = createSimulation();
 const shell = createOfficeShell(canvas);
 const keys = new Map();
@@ -32,6 +35,31 @@ let feedback = { text: '', until: 0, priority: 0 };
 function rankName(index) { return RANKS[index]?.shortName || RANKS[index]?.name || 'Intern'; }
 function formatTime(ms) { const seconds = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`; }
 function resetTiming() { lastFrame = null; accumulator = 0; }
+
+function syncSound() {
+  const unavailable = audio.state === 'unavailable';
+  soundButton.dataset.audioState = audio.state;
+  soundButton.setAttribute('aria-pressed', String(audio.muted));
+  soundButton.setAttribute('aria-label', unavailable ? 'Sound unavailable' : audio.muted ? 'Unmute sound' : 'Mute sound');
+  soundButton.textContent = unavailable ? 'Sound unavailable' : audio.muted ? 'Sound Off' : 'Sound On';
+  soundButton.disabled = unavailable;
+}
+function unlockSound() {
+  const pending = audio.unlock();
+  syncSound();
+  return pending.then((ready) => { syncSound(); return ready; }).catch(() => { syncSound(); return false; });
+}
+soundButton.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  soundButton.focus({ preventScroll: true });
+});
+soundButton.addEventListener('click', () => {
+  soundButton.focus({ preventScroll: true });
+  const pending = audio.setMuted(!audio.muted);
+  syncSound();
+  pending.then((ready) => { syncSound(); if (ready && !audio.muted) audio.play('coffee'); }).catch(syncSound);
+});
 
 function clearControls() {
   simulation.clearInput();
@@ -71,13 +99,17 @@ function present({ focus } = {}) {
     else { announcedLane = -1; setText('movement-status', active ? 'Move with the left and right controls.' : ''); }
     if (terminal) focus = retryButton;
   }
+  let cue = null;
   for (const event of simulation.drainEvents()) {
     const priority = ['ending', 'promotion', 'demotion'].includes(event.type) ? 3 : event.type === 'hit' ? 2 : 1;
+    const cuePriority = event.type === 'ending' ? 4 : priority;
+    if (!cue || cuePriority >= cue.priority) cue = { event, priority: cuePriority };
     if (priority >= feedback.priority || model.elapsedMs >= feedback.until) {
       const defaults = { catch: `+${event.points || 30} points. All checks passed.`, coffee: '+12 team trust. Critical infrastructure restored.', hit: 'Production incident. −30 team trust.', promotion: `Promoted to ${rankName(model.rankIndex)}.`, demotion: 'Access downgraded. A fresh climb starts here.' };
       feedback = { text: event.message || event.text || defaults[event.type] || '', until: model.elapsedMs + 1700, priority };
     }
   }
+  if (cue && phase !== 'ready' && phase !== 'paused') audio.play(cue.event.type, cue.event.outcome);
   if (model.elapsedMs >= feedback.until && phase === 'playing') feedback = { text: '', until: 0, priority: 0 };
   setText('event-message', feedback.text || (phase === 'playing' ? 'Catch wins. Dodge bugs. Keep your team’s trust.' : ''));
   find('event-message').dataset.kind = feedback.priority > 1 ? 'important' : 'routine';
@@ -126,6 +158,8 @@ function present({ focus } = {}) {
 }
 
 function startRun() {
+  audio.stop();
+  unlockSound();
   clearControls();
   feedback = { text: '', until: 0, priority: 0 };
   simulation.start();
@@ -133,6 +167,7 @@ function startRun() {
   present({ focus: canvas });
 }
 function pause(reason = 'manual') {
+  audio.stop();
   if (!timedPhases.has(simulation.phase)) return;
   pauseReason = reason;
   simulation.pause();
@@ -142,6 +177,7 @@ function pause(reason = 'manual') {
 startButton.addEventListener('click', () => { if (simulation.phase === 'ready') startRun(); });
 retryButton.addEventListener('click', () => { if (terminalPhases.has(simulation.phase)) startRun(); });
 resetButton.addEventListener('click', () => {
+  audio.stop();
   clearControls();
   simulation.reset();
   feedback = { text: '', until: 0, priority: 0 };
@@ -151,13 +187,14 @@ resetButton.addEventListener('click', () => {
 pauseButton.addEventListener('click', () => pause());
 resumeButton.addEventListener('click', () => {
   if (simulation.phase !== 'paused') return;
+  unlockSound();
   simulation.resume();
   resetTiming();
   present({ focus: canvas });
 });
 
 function ownsFocus() {
-  return gameCard.contains(document.activeElement);
+  return gameCard.contains(document.activeElement) || document.activeElement === soundButton;
 }
 
 window.addEventListener('keydown', (event) => {
@@ -232,14 +269,16 @@ window.addEventListener('blur', () => pause('focus'));
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) pause('focus');
 });
-gameCard.addEventListener('focusout', () => {
+function handleGameFocusOut() {
   // Start/Resume intentionally transfer focus from a newly hidden button.
   queueMicrotask(() => {
     if (!ownsFocus()) pause('focus');
   });
-});
+}
+gameCard.addEventListener('focusout', handleGameFocusOut);
+soundButton.addEventListener('focusout', handleGameFocusOut);
 document.addEventListener('pointerdown', (event) => {
-  if (!gameCard.contains(event.target)) pause('focus');
+  if (!gameCard.contains(event.target) && event.target !== soundButton) pause('focus');
 });
 
 function frame(timestamp) {
@@ -255,5 +294,6 @@ function frame(timestamp) {
   requestAnimationFrame(frame);
 }
 
+syncSound();
 present();
 requestAnimationFrame(frame);
