@@ -198,7 +198,7 @@ Hosted verification: The existing public URL loaded the Sound On control. Start 
 
 Date: 24 October 2026 (Asia/Singapore).
 
-Stage and status: Ready for player review; public release pending. This is the player's approved interaction addition to Stages 4/5. Broader enjoyment, artwork, and fresh-player checks remain open.
+Stage and status: Ready for player review; published in public version 7. This is the player's approved interaction addition to Stages 4/5. Broader enjoyment, artwork, and fresh-player checks remain open.
 
 What changed: Every promotion, including CEO, requires a short situational Yes/No interview. There are 21 rank-specific questions, three per promotion, with mixed Yes and No answers and sarcastic feedback. The approved lunch/outage example is included. The office, input, items, spawns, damage grace, and contract freeze while answering and reading the result. A correct answer plus explicit Continue grants the promotion. An incorrect answer denies it, leaves rank/lifetime points/trust intact, and sets promotion progress one build below the target; another build offers a different question. Duplicate answers cannot change a verdict. Missed items still have no penalty.
 
@@ -213,3 +213,7 @@ Validation:
 - Static preparation passed with 12 files and all local references verified. No controlled QA state or debug controls are included in the public package.
 
 What to try: Fill a promotion bar, answer one question incorrectly, read the joke, and Continue. Catch another build for a different question, answer it sensibly, and Continue to the new title. Read at your own pace: the contract stays paused throughout each interview.
+
+Source checkpoint: `f8ba27be08f4f20ab5c19fc5e72ecd34a6cb9e29`, pushed to GitHub `codex/stage-0-foundation` and the Sites-managed source. Public Sites version **7**, saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_808c36be4db481918a8fd646f480a772`, deployment ID `appgdep_6adc90a195b08191806022e9573486c1`. Deployment succeeded at https://career-catcher-fungame.tenderstoat19.chatgpt.site. Audience remains public. Version 6 is retained as the previous checkpoint. The archive contains 12 static files plus the hosting manifest.
+
+Hosted check: The existing public URL loads the interview-capable build and starts normally with Sound On/audio running. Local normal play and isolated browser edge cases are recorded separately above; neither uses a hidden public development control. Refresh an already-open game to load this release.
