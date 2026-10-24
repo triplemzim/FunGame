@@ -1,6 +1,6 @@
 # Career Catcher
 
-A responsive tech-office arcade game in development. You are a fresh Computer Science graduate starting a software engineering internship. Stage 0 provides the office shell with **Start First Day** and **Reset Workday**. Movement, falling items, scoring, career progression, sound, and the timed run arrive in later stages.
+A responsive tech-office arcade game in development. You are a fresh Computer Science graduate starting a software engineering internship. Stage 1 provides a five-lane movement playground in the office shell with **Start First Day** and **Reset Workday**. Falling items, scoring, career progression, sound, and the timed run arrive in later stages.
 
 ## Build and preview
 
@@ -15,17 +15,24 @@ Open [the local preview](http://127.0.0.1:4173). Stop the server with Ctrl+C. Af
 
 The preparation script recreates `dist/` from `index.html`, `src/`, and any local `assets/`. It checks packaged HTML resource paths, CSS URLs and imports, and JavaScript static imports. Missing files, references outside the package, external dependencies, and bare module imports fail the build. Deploy the generated `dist/` directory, which is excluded from Git.
 
-## Try Stage 0
+## Try Stage 1
 
-1. Open the preview and select **Start First Day**. The office and message change to show that the graduate intern's first day has started.
-2. Select **Reset Workday** to return to the ready screen. Repeat at least five times; each activation should produce one state change.
-3. Reload from either state. The shell should start ready again.
-4. Use Tab and Enter or Space to operate the buttons. Check that keyboard focus remains visible.
-5. Try a laptop viewport and a narrow phone layout around 375 × 667 pixels. Check that the office and main action fit, then resize the window.
+1. Select **Start First Day**. Use Left/Right arrows or A/D to move one lane; hold to repeat across five lanes.
+2. Use the left/right buttons beneath the intern. They use the same movement rules and clamp at both edges.
+3. Press Escape or select **Pause**. Choose **Resume Work** to continue. Switching focus away pauses automatically and clears held input.
+4. Resize between laptop and narrow phone widths; the position and catch zone stay valid. The phone buttons are at least 48 CSS pixels tall.
+5. Select **Reset Workday** and start again. Reload returns to ready.
 
-The legend introduces green CI builds to catch, coffee to restore **Team trust**, and production bugs to dodge. Team trust is the player-facing label for reputation, not a separate mechanic. These effects arrive with the arcade loop in a later stage.
+The outlined laptop is the visible catch zone. This checkpoint contains movement only; no items fall yet. The published preview is [available here](https://career-catcher-fungame.tenderstoat19.chatgpt.site).
 
-This checkpoint is a tech-office shell preview; the graduate intern does not move and no items fall yet. A local preview alone does not establish ChatGPT Sites compatibility. The deployed Site must also be checked in its actual ChatGPT viewing experience.
+## Movement checks
+
+```sh
+node --test scripts/test-movement.mjs
+node --experimental-vm-modules --test scripts/test-controls.mjs
+```
+
+The first suite tests lane timing, holds, boundaries, and reversals. The second runs actual input listeners with an isolated DOM/renderer stub to test cancellation, focus loss, pause, reset, and keyboard/pointer equivalence. Browser and physical-device checks are recorded separately in the development log.
 
 ## Project references
 

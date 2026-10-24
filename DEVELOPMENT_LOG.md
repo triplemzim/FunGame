@@ -60,3 +60,31 @@ Known issues and unverified items: No known Stage 0 blocker. Phone checks used a
 Feedback to address: User review of the public shell and any layout or interaction feedback before movement work.
 
 Next stage: Stage 1 responsive movement. Not started.
+
+
+## Stage 1 Responsive movement
+
+Date: 24 October 2026 (Asia/Singapore).
+
+Stage and status: In progress; local checks passed, hosted checkpoint pending.
+
+Source commit: Pending Stage 1 checkpoint. Public Site identity and audience are preserved.
+
+What changed: Five logical lanes, a standing graduate intern carrying a laptop, visible catch zone, keyboard and pointer controls, held-input repeat, edge clamping, explicit pause/resume, focus-loss pause, and clean reset. Movement uses 110 ms transitions and 180 ms held repeat in fixed 640 × 420 world coordinates.
+
+Checks completed and evidence:
+
+- Eleven movement-model tests passed for timing, boundaries, reversal, competing sources, clearing input, and reset.
+- Eight input-routing integration tests passed for pointer cancellation/lost capture, focus loss while held, frozen pause, clean resume/reset, one loop, and keyboard/pointer equivalence.
+- Browser keyboard holds crossed the floor and stopped at x=96 and x=544; holding against the boundary did not wrap. D moved one lane.
+- Pointer tap moved one lane, and a native held pointer crossed to the edge without a second step from its compatibility click. The native phone-button path preserved scroll position.
+- Escape paused, Resume Work resumed explicitly, and moving focus outside the board paused without automatic resume.
+- A stale screen-reader pause message discovered during browser QA was fixed and rechecked after resume.
+- At 375 × 667 CSS pixels, the ready action remained visible and active direction buttons measured 50 pixels high below the character, with no horizontal overflow.
+- Independent integration review found no remaining concrete blocker.
+
+Known issues and unverified items: Physical phone touch/multi-touch cancellation and subjective control comfort still need human playtest feedback. No falling items or score have been added.
+
+What to try: Tap and hold each direction; reverse quickly; press against edges; pause or leave focus and resume; resize and reset.
+
+Next stage: Stage 2 catch, dodge, and retry, after the Stage 1 hosted checks.

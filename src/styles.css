@@ -30,6 +30,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #7771d6; outline-offs
 .company-name { font-size: 8px; font-weight: 500; letter-spacing: 1.6px; color: #a8a9bc; }
 .cabinet-body { display: grid; grid-template-columns: 1.08fr 1fr; }
 .office-scene { background: #cec2ed; border-right: 2px solid var(--ink); display: flex; flex-direction: column; min-width: 0; }
+.playfield-wrap { position: relative; display: flex; flex: 1 1 auto; min-height: 0; }
 .scene-heading { display: flex; align-items: center; justify-content: space-between; padding: 22px 25px 12px; position: relative; z-index: 1; }
 .employee-label { font-size: 8px; font-weight: 750; letter-spacing: 1.7px; color: #5c537d; }
 .rank-label { font-size: 11px; font-weight: 750; border: 1.5px solid #82749f; padding: 5px 11px; border-radius: 5px; background: #e9e1f6; transform: rotate(-3deg); }
@@ -68,6 +69,41 @@ h1 em::after { content: ""; height: 3px; border-radius: 3px; position: absolute;
 .noscript-message { padding: 15px; background: #f2dbab; border: 1px solid var(--ink); border-radius: 8px; font-size: 13px; }
 body[data-state="playing"] .status-dot { background: #d8ee9b; box-shadow: 0 0 0 4px #d8ee9b28; }
 body[data-state="playing"] .rank-label { background: #dcebab; border-color: #89976c; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.movement-controls { padding: 14px 24px 11px; border-top: 1px solid #b7a5cc; background: #e7dff1; }
+.direction-row { display: grid; grid-template-columns: 120px minmax(100px, 200px) 120px; justify-content: center; align-items: center; gap: 16px; }
+.direction-button, .secondary-button { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 48px; padding: 10px 16px; border: 2px solid var(--ink); border-radius: 7px; background: #f4eff8; box-shadow: 0 2px 0 var(--ink); color: var(--ink); font-size: 12px; line-height: 1.3; font-weight: 750; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.direction-button { touch-action: none; }
+.direction-button:hover, .secondary-button:hover { background: #fffaff; }
+.direction-button:active, .direction-button.is-pressed, .direction-button[aria-pressed="true"], .direction-button[data-pressed="true"], .secondary-button:active { background: #d8ee9b; transform: translateY(2px); box-shadow: none; }
+.direction-button:disabled { color: #958ba2; border-color: #a196ae; box-shadow: 0 2px 0 #a196ae; cursor: default; background: #e3dbe9; transform: none; }
+#lane-status { font-size: 12px; font-weight: 750; line-height: 1.4; text-align: center; color: #6e5a82; font-variant-numeric: tabular-nums; }
+.session-actions { display: flex; align-items: center; gap: 10px; }
+.session-actions > button { flex: 1 1 auto; min-height: 44px; }
+.session-actions .reset-button { width: auto; font-size: 11px; padding: 11px 14px; }
+.secondary-button { min-height: 44px; font-size: 11px; }
+.controls-help, #controls-help { color: #807389; font-size: 10px; line-height: 1.6; margin: 10px 0 0; text-align: center; }
+#office-canvas:focus-visible { outline: 3px solid #8472b7; outline-offset: -4px; }
+.pause-overlay { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; text-align: center; color: #f2ecfa; background: #28233eeb; backdrop-filter: blur(3px); }
+.pause-overlay h2 { margin: 0 0 10px; font-size: 28px; letter-spacing: -1px; }
+.pause-overlay p { max-width: 300px; margin: 0 0 24px; color: #c9bddb; font-size: 12px; line-height: 1.7; }
+.pause-overlay .primary-button { max-width: 260px; }
+body:is([data-state="playing"], [data-state="paused"]) .app-shell { width: min(860px, calc(100% - 64px)); margin-top: 25px; }
+body:is([data-state="playing"], [data-state="paused"]) .brand-header { margin-bottom: 20px; }
+body:is([data-state="playing"], [data-state="paused"]) .cabinet-body { grid-template-columns: 1fr; }
+body:is([data-state="playing"], [data-state="paused"]) .office-scene { border-right: 0; border-bottom: 2px solid var(--ink); }
+body:is([data-state="playing"], [data-state="paused"]) .scene-heading { padding: 13px 24px 10px; }
+body:is([data-state="playing"], [data-state="paused"]) .playfield-wrap { flex: none; height: 390px; }
+body:is([data-state="playing"], [data-state="paused"]) #office-canvas { flex: none; height: 100%; }
+body:is([data-state="playing"], [data-state="paused"]) .scene-caption { padding: 9px 24px; }
+body:is([data-state="playing"], [data-state="paused"]) .welcome-copy { display: none; }
+body:is([data-state="playing"], [data-state="paused"]) .welcome-panel { display: grid; grid-template-columns: 1fr auto; gap: 14px 25px; padding: 17px 24px; align-items: center; }
+body:is([data-state="playing"], [data-state="paused"]) .workday-message { margin: 0; padding: 0; background: transparent; border: 0; }
+body:is([data-state="playing"], [data-state="paused"]) .actions { margin: 0; min-width: 280px; }
+body:is([data-state="playing"], [data-state="paused"]) .action-note { margin-top: 7px; }
+body:is([data-state="playing"], [data-state="paused"]) .item-legend { padding-top: 15px; padding-bottom: 15px; }
+body[data-state="paused"] .rank-label { background: #e9e1f6; border-color: #9e8eb6; }
+body[data-state="paused"] .status-dot { background: #e5ca8f; box-shadow: 0 0 0 3px #e5ca8f18; }
 
 @media (max-width: 900px) and (min-width: 641px) {
   .app-shell { width: calc(100% - 40px); margin-top: 26px; }
@@ -121,6 +157,25 @@ body[data-state="playing"] .rank-label { background: #dcebab; border-color: #899
   .item-legend strong { font-size: 9px; line-height: 1.35; }
   .legend-description { font-size: 8px; line-height: 1.4; margin-top: 2px; }
   .app-footer { font-size: 6px; letter-spacing: .7px; margin-top: 16px; }
+  .movement-controls { padding: 12px 15px 9px; }
+  .direction-row { grid-template-columns: minmax(86px, 1fr) minmax(60px, 1fr) minmax(86px, 1fr); gap: 10px; }
+  .direction-button { min-height: 50px; padding: 9px 10px; font-size: 11px; gap: 5px; }
+  #lane-status { font-size: 10px; }
+  body:is([data-state="playing"], [data-state="paused"]) .app-shell { width: calc(100% - 28px); margin-top: 14px; }
+  body:is([data-state="playing"], [data-state="paused"]) .brand-header { margin-bottom: 12px; }
+  body:is([data-state="playing"], [data-state="paused"]) .scene-heading { padding: 10px 17px 7px; }
+  body:is([data-state="playing"], [data-state="paused"]) .playfield-wrap { height: 260px; }
+  body:is([data-state="playing"], [data-state="paused"]) .scene-caption { padding: 7px 17px; }
+  body:is([data-state="playing"], [data-state="paused"]) .welcome-panel { grid-template-columns: 1fr; gap: 11px; padding: 13px 17px; }
+  body:is([data-state="playing"], [data-state="paused"]) .workday-message { gap: 7px; }
+  body:is([data-state="playing"], [data-state="paused"]) .actions { min-width: 0; }
+  body:is([data-state="playing"], [data-state="paused"]) .action-note { margin-top: 7px; font-size: 8px; }
+  body:is([data-state="playing"], [data-state="paused"]) .item-legend { padding-top: 12px; padding-bottom: 12px; }
+  .controls-help, #controls-help { font-size: 9px; line-height: 1.5; margin-top: 9px; }
+  .pause-overlay { padding: 20px; }
+  .pause-overlay h2 { font-size: 23px; }
+  .pause-overlay p { max-width: 245px; margin-bottom: 18px; font-size: 11px; }
+  .pause-overlay .primary-button { min-height: 48px; max-width: 240px; }
 }
 
 @media (max-width: 360px) {

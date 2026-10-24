@@ -14,10 +14,10 @@
     <main class="app-shell">
       <header class="brand-header">
         <a class="brand" href="./" aria-label="Career Catcher home"><span class="brand-icon" aria-hidden="true">↗</span><span>CAREER CATCHER<span class="brand-caption">A LITTLE AMBITION GOES A LONG WAY.</span></span></a>
-        <span class="preview-badge">Office preview</span>
+        <span class="preview-badge">Movement playground</span>
       </header>
 
-      <section class="game-card" aria-labelledby="game-title">
+      <section class="game-card" id="game-card" aria-labelledby="game-title">
         <div class="cabinet-heading">
           <div class="floor-label"><span class="status-dot" aria-hidden="true"></span> FLOOR 01 <span class="floor-divider" aria-hidden="true">/</span> THE BEGINNING</div>
           <span class="company-name">SHIP IT, INC.</span>
@@ -25,7 +25,24 @@
         <div class="cabinet-body">
           <div class="office-scene">
             <div class="scene-heading"><span class="employee-label">YOUR CURRENT POSITION</span><span class="rank-label">Intern</span></div>
-            <canvas id="office-canvas" role="img" aria-label="A new CS graduate wearing a lanyard at a desk with a stickered laptop and diploma, looking toward the corner office.">A software engineering intern's first desk in a bright tech office.</canvas>
+            <div class="playfield-wrap">
+              <canvas id="office-canvas" tabindex="0" role="img" aria-describedby="controls-help" aria-label="A new CS graduate wearing a lanyard at a desk with a stickered laptop and diploma, looking toward the corner office.">A software engineering intern's first desk in a bright tech office.</canvas>
+              <div class="pause-overlay" id="pause-overlay" hidden>
+                <span class="pause-symbol" aria-hidden="true">Ⅱ</span>
+                <h2>Taking a breather.</h2>
+                <p id="pause-reason">Your lane is saved. Resume when you're ready.</p>
+                <button class="primary-button" id="resume-button" type="button">Resume Work <span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div class="movement-controls" id="movement-controls" hidden>
+              <div class="direction-row">
+                <button class="direction-button" id="move-left" type="button" aria-label="Move left"><span aria-hidden="true">←</span> Left</button>
+                <span id="lane-status" class="lane-status">Lane 3 / 5</span>
+                <button class="direction-button" id="move-right" type="button" aria-label="Move right">Right <span aria-hidden="true">→</span></button>
+              </div>
+              <p class="controls-help" id="controls-help">← → or A / D to move · Hold to repeat · Esc to pause</p>
+            </div>
+            <p class="sr-only" id="movement-status" aria-live="polite" aria-atomic="true"></p>
             <div class="scene-caption"><span class="scene-caption-dot" aria-hidden="true"></span><span id="scene-caption">New degree. First desk. Big ambitions.</span><span class="scene-number" aria-hidden="true">01</span></div>
           </div>
           <div class="welcome-panel">
@@ -40,8 +57,11 @@
             </div>
             <div class="actions">
               <button class="primary-button" id="start-button" type="button"><span>Start First Day</span><span aria-hidden="true">↗</span></button>
-              <button class="primary-button reset-button" id="reset-button" type="button" hidden><span>Reset Workday</span><span aria-hidden="true">↻</span></button>
-              <p class="action-note" id="action-note">Clock in. Make yourself at home.</p>
+              <div class="session-actions" id="session-actions" hidden>
+                <button class="secondary-button" id="pause-button" type="button">Pause <span aria-hidden="true">Ⅱ</span></button>
+                <button class="secondary-button reset-button" id="reset-button" type="button">Reset Workday <span aria-hidden="true">↻</span></button>
+              </div>
+              <p class="action-note" id="action-note">Arrow keys or A / D. Your first move starts here.</p>
             </div>
           </div>
         </div>

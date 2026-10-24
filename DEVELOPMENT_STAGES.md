@@ -19,7 +19,7 @@ Statuses: **Not started → In progress → Ready for playtest → Complete**. U
 | Stage | Playable checkpoint | Main question | Status |
 | --- | --- | --- | --- |
 | 0 — Foundation and Sites | Tech-office shell with working start/reset | Can we open the intended game surface? | Complete |
-| 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | Not started |
+| 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | In progress |
 | 2 — Catch and dodge | Basic timed arcade run with retry | Are catches satisfying and hazards understandable? | Not started |
 | 3 — Complete career | All ranks, consequences, and endings | Can the whole game run correctly? | Not started |
 | 4 — Fairness and pacing | Balanced, repeatable three-minute challenge | Is success earned and another attempt appealing? | Not started |
@@ -269,4 +269,4 @@ Feedback to address:
 Next stage:
 ```
 
-Implementation status: Stage 0 is complete under the approved [Stage 0 plan](STAGE_0_PLAN.md). Public access and hosted in-app checks passed after the user requested a public audience. See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence. Later stages have not started.
+Implementation status: Stage 0 is complete. Stage 1 is in progress; the user has authorized continuing through later stages without another approval gate. See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence.

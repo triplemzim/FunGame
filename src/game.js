@@ -1,24 +1,37 @@
-// A stationary office vignette. Simulation and movement arrive in later stages.
+import { WORLD_WIDTH, WORLD_HEIGHT, LANE_CENTERS, CATCH_ZONE } from './movement.js';
+
+// The renderer has no simulation or input loop; main.js supplies the current model.
 export function createOfficeShell(canvas) {
   const context = canvas.getContext('2d');
-  let state = 'ready';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let model = { phase: 'ready', x: LANE_CENTERS[2], lane: 2, moving: false, direction: 0 };
 
   function draw() {
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height || !context) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(bounds.width * dpr);
-    canvas.height = Math.round(bounds.height * dpr);
-    const width = 640;
-    const height = bounds.height / bounds.width * width;
+    const pixelWidth = Math.round(bounds.width * dpr);
+    const pixelHeight = Math.round(bounds.height * dpr);
+    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
+    const active = model.phase !== 'ready';
+    const width = WORLD_WIDTH;
+    const height = active ? WORLD_HEIGHT : bounds.height / bounds.width * width;
     const ctx = context;
-    ctx.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = '#c3b7d8'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (active) {
+      const scale = Math.min(canvas.width / width, canvas.height / height);
+      ctx.setTransform(scale, 0, 0, scale, (canvas.width - width * scale) / 2, (canvas.height - height * scale) / 2);
+    } else {
+      ctx.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
+    }
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     const ink = '#363047';
     const floor = height - 48;
     const unit = Math.min(1.06, Math.max(.76, height / 390));
-    const started = state === 'playing';
+    const started = model.phase === 'playing';
 
     function path(points, fill, stroke = ink, lineWidth = 2) {
       ctx.beginPath();
@@ -48,6 +61,88 @@ export function createOfficeShell(canvas) {
     function text(value, x, y, size, color, weight = '600', align = 'left') {
       ctx.font = `${weight} ${size}px ui-sans-serif, system-ui, sans-serif`;
       ctx.textAlign = align; ctx.fillStyle = color; ctx.fillText(value, x, y);
+    }
+
+    if (active) {
+      ctx.fillStyle = '#d2c9e8'; ctx.fillRect(0, 0, width, height);
+      text('ENGINEERING FLOOR', 42, 25, 9, '#80718f', '750');
+      text('NO DEPLOYS. JUST FOOTWORK.', 598, 25, 7.5, '#9686a3', '600', 'right');
+
+      // Quiet office scenery leaves the five-lane floor easy to read.
+      [42, 350].forEach((x, windowIndex) => {
+        round(x, 43, 248, 165, 4, '#e7e3f1', '#9c8ab3', 2);
+        const baseY = 205;
+        for (let i = 0; i < 8; i++) {
+          const buildingHeight = 35 + ((i * 31 + windowIndex * 17) % 66);
+          ctx.fillStyle = i % 2 ? '#ccc5db' : '#d7d0e2';
+          ctx.fillRect(x + 5 + i * 30, baseY - buildingHeight, 25, buildingHeight);
+          for (let y = baseY - buildingHeight + 9; y < baseY - 5; y += 17) {
+            ctx.fillStyle = '#e9e3ed';
+            ctx.fillRect(x + 11 + i * 30, y, 4, 5);
+            ctx.fillRect(x + 21 + i * 30, y, 4, 5);
+          }
+        }
+        line(x + 124, 45, x + 124, 205, '#b4a5c7', 3);
+        line(x + 2, 124, x + 245, 124, '#b4a5c7', 2);
+        round(x - 6, 205, 260, 7, 2, '#eae1ef', '#a594b5', 1.5);
+      });
+      round(304, 94, 32, 55, 3, '#b8abc9', '#9a88ae', 1.3);
+      round(308, 98, 24, 35, 2, '#62566f', null);
+      [314, 320, 326].forEach((x) => ellipse(x, 104, 1.5, 1.5, '#d8ee9b'));
+      line(313, 119, 318, 124, '#d8ee9b', 2); line(318, 124, 328, 112, '#d8ee9b', 2);
+      text('CI: PASS', 320, 143, 5.4, '#80708e', '750', 'center');
+
+      ctx.fillStyle = '#c0b0cf'; ctx.fillRect(0, 253, width, height - 253);
+      ctx.fillStyle = '#c8bad6'; ctx.fillRect(0, 253, width, 8);
+      line(0, 253, width, 253, '#a390b6', 2);
+      const laneWidth = LANE_CENTERS[1] - LANE_CENTERS[0];
+      LANE_CENTERS.forEach((center, lane) => {
+        round(center - laneWidth / 2 + 6, 270, laneWidth - 12, 128, 10, lane === model.lane ? '#d6cce1' : '#c4b6d1', null);
+        text(String(lane + 1).padStart(2, '0'), center, 412, 10, lane === model.lane ? '#6e5a82' : '#a38fb4', '750', 'center');
+        if (lane < LANE_CENTERS.length - 1) {
+          ctx.setLineDash([4, 8]);
+          line(center + laneWidth / 2, 271, center + laneWidth / 2, 394, '#b39fc3', 1.2);
+          ctx.setLineDash([]);
+        }
+      });
+
+      // The intern moves in world coordinates; only the scenery stays still.
+      const x = Number.isFinite(model.x) ? model.x : LANE_CENTERS[2];
+      ellipse(x, 389, 30, 5, '#7f698d35');
+      ctx.save(); ctx.translate(x, 384);
+      if (model.moving && !reducedMotion.matches) ctx.rotate((model.direction || 0) * .025);
+      round(-15, -40, 11, 37, 3, '#53546e', ink, 1.7);
+      round(4, -40, 11, 37, 3, '#62617a', ink, 1.7);
+      round(-20, -6, 22, 9, 3, '#f2eadb', ink, 1.7);
+      round(3, -6, 22, 9, 3, '#f2eadb', ink, 1.7);
+      line(-14, -2, -5, -2, '#beb0b8', 1); line(10, -2, 19, -2, '#beb0b8', 1);
+      path([[-18, -77], [-9, -82], [12, -82], [22, -75], [26, -34], [-24, -34]], '#f1e5cc', ink, 1.8);
+      round(-5, -87, 13, 12, 3, '#dca480', ink, 1.2);
+      line(-10, -79, 5, -63, '#8f78b0', 2.4); line(14, -79, 5, -63, '#8f78b0', 2.4);
+      round(0, -66, 14, 12, 2, '#e4efbd', '#86708e', .8);
+      text('NEW', 7, -58, 3.8, '#6c597e', '750', 'center');
+      ellipse(-20, -98, 4, 6, '#e7b895', ink, 1); ellipse(20, -98, 4, 6, '#e7b895', ink, 1);
+      ellipse(0, -98, 20, 23, '#e7b895', ink, 1.8);
+      ctx.beginPath(); ctx.moveTo(-19, -100); ctx.bezierCurveTo(-28, -123, -12, -128, 1, -123); ctx.bezierCurveTo(19, -128, 28, -114, 19, -100); ctx.lineTo(15, -113); ctx.bezierCurveTo(4, -108, 0, -115, -4, -116); ctx.bezierCurveTo(-9, -109, -16, -115, -19, -100); ctx.fillStyle = '#443b4a'; ctx.fill(); ctx.strokeStyle = ink; ctx.lineWidth = 1.3; ctx.stroke();
+      round(-14, -103, 12, 9, 3, '#f8e8d633', '#554657', 1.1);
+      round(4, -103, 12, 9, 3, '#f8e8d633', '#554657', 1.1);
+      line(-2, -99, 4, -99, '#554657', 1);
+      ellipse(-8, -98, 1, 1.3, '#443b4a'); ellipse(10, -98, 1, 1.3, '#443b4a');
+      line(1, -96, 0, -91, '#bd876f', 1);
+      ctx.beginPath(); ctx.moveTo(-4, -86); ctx.quadraticCurveTo(1, -82, 7, -87); ctx.strokeStyle = '#7b5460'; ctx.lineWidth = 1.2; ctx.stroke();
+      // The laptop and visible catch rectangle share the same horizontal center.
+      round(-29, -54, 58, 25, 3, '#b9aed0', ink, 1.8);
+      round(-12, -49, 24, 13, 2, '#4e455f', '#7c6a94', .7);
+      text('</>', 0, -39, 9, '#d8ee9b', '750', 'center');
+      round(16, -49, 8, 6, 1, '#ecdfab', null);
+      ellipse(-29, -41, 5, 6, '#e7b895', ink, 1.2); ellipse(29, -41, 5, 6, '#e7b895', ink, 1.2);
+      ctx.restore();
+
+      const catchWidth = CATCH_ZONE.halfWidth * 2;
+      round(x - catchWidth / 2, CATCH_ZONE.y, catchWidth, CATCH_ZONE.height, 6, '#d8ee9b14', '#e6f8b2', 2);
+      line(x - catchWidth / 2 - 5, CATCH_ZONE.y + 5, x - catchWidth / 2 - 5, CATCH_ZONE.y + CATCH_ZONE.height - 5, '#e6f8b2', 1.5);
+      line(x + catchWidth / 2 + 5, CATCH_ZONE.y + 5, x + catchWidth / 2 + 5, CATCH_ZONE.y + CATCH_ZONE.height - 5, '#e6f8b2', 1.5);
+      return;
     }
 
     ctx.fillStyle = '#cec2ed'; ctx.fillRect(0, 0, width, height);
@@ -215,12 +310,13 @@ export function createOfficeShell(canvas) {
   const observer = new ResizeObserver(draw);
   observer.observe(canvas);
   window.addEventListener('resize', draw, { passive: true });
+  reducedMotion.addEventListener('change', draw);
   draw();
 
   return {
-    setState(nextState) {
-      if (nextState !== 'ready' && nextState !== 'playing') return;
-      state = nextState;
+    render(nextModel) {
+      if (!nextModel || !['ready', 'playing', 'paused'].includes(nextModel.phase)) return;
+      model = { ...nextModel };
       draw();
     },
   };
