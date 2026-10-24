@@ -1,13 +1,13 @@
 # Career Catcher Improvements Backlog
 
-The user requested an MVP-first pass on 24 October 2026. First deliver a complete playable run with movement, catches and hazards, career progression, three endings, and clean retry. Keep functional controls, clear feedback, fair basic patterns, and reliable pause/reset in that pass. Defer the work below until the playable MVP is ready.
+The user requested an MVP-first pass on 24 October 2026. The complete MVP now implements movement, catches and hazards, all eight ranks, three endings, and clean retry; see DEVELOPMENT_LOG.md for verification and deployment status. Keep functional controls, clear feedback, fair basic patterns, and reliable pause/reset in that pass. Defer the work below until the playable MVP is ready.
 
 ## After the playable MVP
 
 | Priority | Improvement | Why it matters | Status |
 | --- | --- | --- | --- |
 | High | Tune movement transition/repeat timing using player feedback | Find a comfortable speed on keyboard and touch | Deferred; current values 110 ms / 180 ms |
-| High | Measure first catch, promotions, Manager, and skilled CEO timing across seeds | Make the three-minute challenge achievable and engaging | Deferred; starting values from game plan |
+| High | Measure first catch, promotions, Manager, and skilled CEO timing across seeds | Make the three-minute challenge achievable and engaging | Deferred; ideal bot feasibility measured, human tuning remains |
 | High | Observe roughly five fresh players without coaching | Find confusing goals, unfair hits, and weak replay motivation | Deferred |
 | High | Test physical phone touch, multi-touch cancellation, and focus interruption | Confirm real-device input behavior beyond desktop pointer checks | Deferred; shared model and input-routing checks exist |
 | Medium | Richer employee reactions, movement lean, catch pop, and rank celebrations | Make catches and consequences feel satisfying | Deferred; keep simple matching feedback in MVP |
@@ -26,3 +26,10 @@ The user requested an MVP-first pass on 24 October 2026. First deliver a complet
 - A browser QA issue with a stale pause announcement after resume was fixed during Stage 1.
 - The public Site identity and previous saved versions should be retained throughout later work.
 - Gameplay blockers take priority over this backlog. Add observed issues here with a reproduction and affected checkpoint rather than silently claiming an untested improvement passed.
+
+## MVP implementation notes
+
+- Core simulation, three clear item categories, all eight engineering ranks, promotion/demotion consequences, contract clock, endings, and retry are implemented. Sound, personal best, and the additional four visual item variants remain deferred by the MVP-first instruction.
+- Five ideal seeded bot runs reached CEO in roughly 117–145 active seconds. First promotion was faster than the human target in several ideal runs; measure real players before changing balance.
+- Phone QA moved Pause into the playfield heading so it is reachable without scrolling below the action.
+- Human fun, physical phone interruption, and judge-specific access remain unverified; automated feasibility checks are not fresh-player sessions.

@@ -1,6 +1,8 @@
 # Career Catcher
 
-A responsive tech-office arcade game in development. You are a fresh Computer Science graduate starting a software engineering internship. Stage 1 provides a five-lane movement playground in the office shell with **Start First Day** and **Reset Workday**. Falling items, scoring, career progression, sound, and the timed run arrive in later stages.
+A three-minute tech-office arcade game. Start as a fresh CS graduate, catch green CI builds, avoid production bugs, recover team trust with coffee, and climb through eight ranks to CEO. Losing all trust demotes you; losing it as an Intern ends the run. The contract review ends any run still active after three minutes.
+
+Play the [public MVP](https://career-catcher-fungame.tenderstoat19.chatgpt.site). The first complete MVP includes the catch/dodge loop, promotions and demotions, all three endings, keyboard and pointer controls, pause, and immediate retry. Richer artwork, sound, extra item variants, detailed balancing, and broader playtesting are tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md).
 
 ## Build and preview
 
@@ -15,24 +17,23 @@ Open [the local preview](http://127.0.0.1:4173). Stop the server with Ctrl+C. Af
 
 The preparation script recreates `dist/` from `index.html`, `src/`, and any local `assets/`. It checks packaged HTML resource paths, CSS URLs and imports, and JavaScript static imports. Missing files, references outside the package, external dependencies, and bare module imports fail the build. Deploy the generated `dist/` directory, which is excluded from Git.
 
-## Try Stage 1
+## Play
 
-1. Select **Start First Day**. Use Left/Right arrows or A/D to move one lane; hold to repeat across five lanes.
-2. Use the left/right buttons beneath the intern. They use the same movement rules and clamp at both edges.
-3. Press Escape or select **Pause**. Choose **Resume Work** to continue. Switching focus away pauses automatically and clears held input.
-4. Resize between laptop and narrow phone widths; the position and catch zone stay valid. The phone buttons are at least 48 CSS pixels tall.
-5. Select **Reset Workday** and start again. Reload returns to ready.
+1. Select **Start First Day**. Use Left/Right arrows or A/D; hold to repeat across five lanes. The direction buttons use the same rules.
+2. Catch green checkmarks with the outlined laptop for **30 points**. Coffee restores **12 team trust**; coral bugs cost **30**. Missing items has no penalty.
+3. Fill the next-promotion bar while keeping at least **40 trust**. At zero trust, lose one rank and regain 45 trust; at Intern, the run ends.
+4. Press Escape or **Pause**. Choose **Resume Work** to continue. Leaving focus pauses the contract and clears held input.
+5. Reach CEO, get dismissed, or finish the 180-second contract. Review the actual run stats and select **Try Another Career**.
 
-The outlined laptop is the visible catch zone. This checkpoint contains movement only; no items fall yet. The published preview is [available here](https://career-catcher-fungame.tenderstoat19.chatgpt.site).
+Resize between laptop and narrow phone widths without changing the logical game rules. Touch buttons sit below the action. Current MVP item art uses three clear categories; additional software/agent variants come later.
 
-## Movement checks
+## Functional checks
 
 ```sh
-node --test scripts/test-movement.mjs
-node --experimental-vm-modules --test scripts/test-controls.mjs
+node --experimental-vm-modules --test scripts/test-movement.mjs scripts/test-controls.mjs scripts/test-simulation.mjs
 ```
 
-The first suite tests lane timing, holds, boundaries, and reversals. The second runs actual input listeners with an isolated DOM/renderer stub to test cancellation, focus loss, pause, reset, and keyboard/pointer equivalence. Browser and physical-device checks are recorded separately in the development log.
+Checks cover input timing/cancellation/focus, actual UI event routing and ending/retry presentation in an isolated DOM stub, and collision/career/clock rules. Simulation supports module-only initial-state scenarios for controlled QA; no development controls appear in the public interface. Browser and physical-device observations are recorded separately in the development log.
 
 ## Project references
 

@@ -93,7 +93,7 @@ Next stage: Stage 2 catch, dodge, and retry, followed by Stage 3 complete career
 
 ## MVP continuation after app restart
 
-The user has authorized proceeding through subsequent stages without approval, with a newer constraint to prioritize the complete playable MVP and defer time-consuming details. Track deferred work in [IMPROVEMENTS.md](IMPROVEMENTS.md). No Stage 2 implementation has started at this checkpoint.
+The user has authorized proceeding through subsequent stages without approval, with a newer constraint to prioritize the complete playable MVP and defer time-consuming details. Track deferred work in [IMPROVEMENTS.md](IMPROVEMENTS.md). At that restart checkpoint, no Stage 2 implementation had started; the later MVP entry below records resumed work.
 
 Resume with a timed catch-and-dodge loop, then all eight engineering ranks, reputation gates and demotion, CEO/dismissal/contract-review endings, and clean retry. Keep essential readable feedback and fair basic spawns; defer richer art, sound, expanded jokes, detailed tuning, personal best, fresh-player sessions, and judge-release preparation until the MVP is playable.
 
@@ -104,3 +104,30 @@ Important functional cases: unique collision processing; swept collision must ov
 Existing input tests use a small isolated VM/DOM harness in `scripts/test-controls.mjs` linked to the real movement module. Update the harness when main imports simulation. The renderer imports movement geometry and exposes `render(model)`. All assets are local and the static preparation script checks the complete package.
 
 The user is restarting ChatGPT after granting screen-recording/audio permissions. Resume from the repository and the existing Site ID; obtain fresh source credentials when needed. Do not create a second Site. Source branch remains `codex/stage-0-foundation`.
+
+
+## Complete playable MVP Stages 2 and 3
+
+Date: 24 October 2026 (Asia/Singapore).
+
+Stage and status: In progress; functional model and UI are integrated, deployment pending.
+
+The user requested an MVP-first pass with continued work and no new approval gate. Stages 2 and 3 are implemented together to reach a complete run before deferred presentation work. The progression-disabled module scenario verifies the Stage 2 Intern loop separately; the public interface uses the complete career.
+
+What changed: Three falling categories (green build, coffee, production bug), swept catches, points and Team trust, 1.5-second damage protection, a 180-second active contract, all eight engineering ranks, gated promotions, demotion with fresh progress, three endings, accurate results, and clean retry. The existing keyboard/pointer movement, focus pause, and responsive world are retained.
+
+Checks completed and evidence:
+
+- Sixteen simulation checks passed for collision batches, swept overlap timing, grace, coffee, progression at 39/40 trust, overflow, demotion, all ranks, final-step priority, time truncation, pause/transitions, terminal freeze, and retry.
+- Eleven movement checks and eleven UI/input-routing checks passed, including all three ending screens, stopped results time/score, and a fresh retry. Controlled scenarios exist only in module tests, not in the public UI.
+- Independent review found no material gameplay or phase/clock blocker.
+- Five normal seeded bot runs using ordinary press/release movement reached CEO at 122.70, 117.35, 137.75, 144.45, and 132.65 active seconds. First catch was 2.93 seconds in each. These ideal forward-looking runs establish feasibility, not human pacing or enjoyment; detailed tuning remains deferred.
+- Local browser play registered real catches and hazards, a promotion and later demotion, score preserved across demotion, and a decreasing contract clock. At 105 active seconds the run had 240 lifetime points and had returned to Intern with restored trust.
+- At 375 × 667, active direction controls remained 50 pixels high and below the character with no horizontal overflow. The paused contract remained at 0:43 through independent work, then resumed explicitly.
+- Pause was moved into the playfield heading so a phone player can reach it without scrolling below the action.
+
+Known issues and unverified items: Physical touch interruption and human comfort are not established by automated checks. Art uses three category icons; seven visual variants, audio, richer comedy/reactions, personal best, detailed balancing, and judge preparation remain in IMPROVEMENTS.md.
+
+Additional browser results: A normal run reached dismissal at 148.9 active seconds with 360 points, 6 incidents, one demotion, highest rank Junior Software Engineer, and final rank Intern. The phone results screen displayed those values with a prominent usable Retry. Retry reset the visible clock to 3:00, points to zero, and trust to 100. Five subsequent Start/Reset cycles preserved one canvas and a clean ready screen. CEO and contract review were reached in controlled simulation/UI tests; natural CEO feasibility was checked by the seeded input bot.
+
+Next: publish the same public Site and record its source/version checkpoint. Detailed refinement remains deferred under the MVP-first instruction.

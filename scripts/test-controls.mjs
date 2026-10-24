@@ -7,10 +7,12 @@ if (!vm.SourceTextModule) {
   throw new Error('Run with: node --experimental-vm-modules --test scripts/test-controls.mjs');
 }
 
-const [mainSource, movementSource, html] = await Promise.all([
+const [mainSource, movementSource, html, simulationSource, rulesSource] = await Promise.all([
   readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/movement.js', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
+  readFile(new URL('../src/simulation.js', import.meta.url), 'utf8'),
+  readFile(new URL('../src/rules.js', import.meta.url), 'utf8'),
 ]);
 
 // Only the event, focus, and capture methods consumed by main.js are modeled.
@@ -44,7 +46,7 @@ class Target {
   }
 }
 
-async function playground() {
+async function playground({ initialState = null } = {}) {
   const elements = new Map([...html.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => [id, new Target()]));
   const buttonIds = [...html.matchAll(/<button\b[^>]*\bid="([^"]+)"/g)].map(([, id]) => id);
   const document = new Target();
@@ -70,15 +72,21 @@ async function playground() {
     requestAnimationFrame(callback) { frames.push(callback); return frames.length; },
   });
   const movement = new vm.SourceTextModule(movementSource, { context, identifier: 'movement.js' });
+  const rules = new vm.SourceTextModule(rulesSource, { context, identifier: 'rules.js' });
+  const simulation = new vm.SourceTextModule(simulationSource, { context, identifier: 'simulation.js' });
   const renderer = new vm.SyntheticModule(['createOfficeShell'], function () {
     this.setExport('createOfficeShell', () => ({ render(model) { renders.push({ ...model }); } }));
   }, { context, identifier: 'game.js' });
-  const main = new vm.SourceTextModule(mainSource, { context, identifier: 'main.js' });
-  await main.link(specifier => {
+  const configuredSource = initialState ? mainSource.replace('const simulation = createSimulation();', `const simulation = createSimulation(${JSON.stringify({ seed: 1, spawnEnabled: false, initialState })});`) : mainSource;
+  const main = new vm.SourceTextModule(configuredSource, { context, identifier: 'main.js' });
+  const link = specifier => {
     if (specifier === './movement.js') return movement;
     if (specifier === './game.js') return renderer;
+    if (specifier === './simulation.js') return simulation;
+    if (specifier === './rules.js') return rules;
     throw new Error(`Unexpected main.js dependency: ${specifier}`);
-  });
+  };
+  await main.link(link);
   await main.evaluate();
 
   function tick(count = 1) {
@@ -111,7 +119,7 @@ async function playground() {
 
   return {
     elements, document, window, frames, tick, click, key, pointer,
-    state: () => ({ ...renders.at(-1) }),
+    state: () => { const { lane, x, moving, direction, phase } = renders.at(-1); return { lane, x, moving, direction, phase }; },
     start: () => click('start-button'),
   };
 }
@@ -228,3 +236,30 @@ test('keyboard and pointer holds use equivalent movement and repeat timing', asy
     assert.deepEqual(keyboard.state(), pointer.state());
   }
 });
+
+
+for (const [outcome, initialState, title] of [
+  ['dismissed', { reputation: 30, items: [{ type: 'bug', x: 320, y: 330, vy: 0 }] }, 'Production access revoked.'],
+  ['victory', { rankIndex: 6, promotionProgress: 519, items: [{ type: 'build', x: 320, y: 330, vy: 0 }] }, 'You made CEO.'],
+  ['contractReview', { elapsedMs: 179999 }, 'Contract reviewed.'],
+]) {
+  test(`${outcome} presents accurate results, stops time, and offers a fresh retry`, async () => {
+    const app = await playground({ initialState });
+    app.start();
+    app.tick(2);
+    assert.equal(app.state().phase, outcome);
+    assert.equal(app.elements.get('result-title').textContent, title);
+    assert.equal(app.elements.get('results-overlay').hidden, false);
+    assert.equal(app.elements.get('movement-controls').hidden, true);
+    assert.equal(app.document.activeElement, app.elements.get('retry-button'));
+    const time = app.elements.get('hud-time').textContent;
+    const score = app.elements.get('hud-score').textContent;
+    app.tick(120);
+    assert.equal(app.elements.get('hud-time').textContent, time);
+    assert.equal(app.elements.get('hud-score').textContent, score);
+    app.click('retry-button');
+    assert.equal(app.state().phase, 'playing');
+    assert.equal(app.elements.get('results-overlay').hidden, true);
+    assert.equal(app.document.activeElement, app.elements.get('office-canvas'));
+  });
+}

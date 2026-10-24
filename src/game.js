@@ -66,7 +66,7 @@ export function createOfficeShell(canvas) {
     if (active) {
       ctx.fillStyle = '#d2c9e8'; ctx.fillRect(0, 0, width, height);
       text('ENGINEERING FLOOR', 42, 25, 9, '#80718f', '750');
-      text('NO DEPLOYS. JUST FOOTWORK.', 598, 25, 7.5, '#9686a3', '600', 'right');
+      text('SHIP GOOD THINGS. DODGE BAD ONES.', 598, 25, 7.5, '#9686a3', '600', 'right');
 
       // Quiet office scenery leaves the five-lane floor easy to read.
       [42, 350].forEach((x, windowIndex) => {
@@ -106,8 +106,51 @@ export function createOfficeShell(canvas) {
         }
       });
 
+      // Every icon stays within its collision dimensions and uses shape as well as color.
+      for (const item of model.items || []) {
+        if (!Number.isFinite(item.x) || !Number.isFinite(item.y)) continue;
+        ctx.save();
+        ctx.translate(item.x, item.y);
+        ctx.scale((item.halfWidth || 18) / 18, (item.halfHeight || 18) / 18);
+        if (item.type === 'coffee') {
+          ellipse(0, 15, 15, 2.5, '#8b6b7630');
+          round(10, -7, 7, 13, 4, '#edc87f', ink, 1.8);
+          round(-13, -12, 26, 26, 4, '#f3cf88', ink, 1.8);
+          ellipse(0, -11, 12, 3, '#a47758', ink, 1.4);
+          line(-4, -6, -4, 7, '#fce7b6', 2);
+          line(-7, -17, -7, -15, '#fff5de', 2);
+          line(1, -18, 1, -15, '#fff5de', 2);
+        } else if (item.type === 'bug') {
+          path([[0, -17], [17, 14], [-17, 14]], '#eea596', ink, 1.8);
+          ellipse(0, 3, 5, 7, '#62495b');
+          ellipse(0, -5, 3, 3, '#62495b');
+          line(-4, -1, -8, -4, '#62495b', 1.5); line(4, -1, 8, -4, '#62495b', 1.5);
+          line(-5, 3, -9, 3, '#62495b', 1.5); line(5, 3, 9, 3, '#62495b', 1.5);
+          line(-4, 7, -8, 10, '#62495b', 1.5); line(4, 7, 8, 10, '#62495b', 1.5);
+          line(0, -2, 0, 8, '#f1b8ac', 1);
+        } else {
+          round(-17, -16, 34, 32, 5, '#d5ed9d', ink, 1.8);
+          round(-13, -12, 26, 6, 2, '#b4cd7f', null);
+          ellipse(-9, -9, 1.2, 1.2, '#6b8052'); ellipse(-4, -9, 1.2, 1.2, '#6b8052');
+          line(-8, 3, -2, 9, '#3f634f', 3); line(-2, 9, 10, -2, '#3f634f', 3);
+        }
+        ctx.restore();
+      }
+
       // The intern moves in world coordinates; only the scenery stays still.
       const x = Number.isFinite(model.x) ? model.x : LANE_CENTERS[2];
+      const protectedFromDamage = model.graceRemainingMs > 0;
+      if (protectedFromDamage) {
+        round(x - 40, 258, 80, 135, 18, '#f4b6a82a', '#e6a095', 2);
+      }
+      if (model.phase === 'victory') {
+        // A small golden chair is the inexpensive CEO payoff behind the results.
+        round(x - 37, 279, 74, 92, 15, '#d7b461', '#806a44', 2);
+        round(x - 29, 286, 58, 70, 12, '#ecd18a', '#b99752', 1.5);
+        round(x - 43, 342, 86, 17, 6, '#d8b867', '#806a44', 2);
+        line(x - 28, 359, x - 28, 390, '#806a44', 5);
+        line(x + 28, 359, x + 28, 390, '#806a44', 5);
+      }
       ellipse(x, 389, 30, 5, '#7f698d35');
       ctx.save(); ctx.translate(x, 384);
       if (model.moving && !reducedMotion.matches) ctx.rotate((model.direction || 0) * .025);
@@ -120,7 +163,7 @@ export function createOfficeShell(canvas) {
       round(-5, -87, 13, 12, 3, '#dca480', ink, 1.2);
       line(-10, -79, 5, -63, '#8f78b0', 2.4); line(14, -79, 5, -63, '#8f78b0', 2.4);
       round(0, -66, 14, 12, 2, '#e4efbd', '#86708e', .8);
-      text('NEW', 7, -58, 3.8, '#6c597e', '750', 'center');
+      text(['NEW', 'JR', 'SE', 'SR', 'TL', 'EM', 'CTO', 'CEO'][model.rankIndex || 0], 7, -58, 3.8, '#6c597e', '750', 'center');
       ellipse(-20, -98, 4, 6, '#e7b895', ink, 1); ellipse(20, -98, 4, 6, '#e7b895', ink, 1);
       ellipse(0, -98, 20, 23, '#e7b895', ink, 1.8);
       ctx.beginPath(); ctx.moveTo(-19, -100); ctx.bezierCurveTo(-28, -123, -12, -128, 1, -123); ctx.bezierCurveTo(19, -128, 28, -114, 19, -100); ctx.lineTo(15, -113); ctx.bezierCurveTo(4, -108, 0, -115, -4, -116); ctx.bezierCurveTo(-9, -109, -16, -115, -19, -100); ctx.fillStyle = '#443b4a'; ctx.fill(); ctx.strokeStyle = ink; ctx.lineWidth = 1.3; ctx.stroke();
@@ -129,7 +172,7 @@ export function createOfficeShell(canvas) {
       line(-2, -99, 4, -99, '#554657', 1);
       ellipse(-8, -98, 1, 1.3, '#443b4a'); ellipse(10, -98, 1, 1.3, '#443b4a');
       line(1, -96, 0, -91, '#bd876f', 1);
-      ctx.beginPath(); ctx.moveTo(-4, -86); ctx.quadraticCurveTo(1, -82, 7, -87); ctx.strokeStyle = '#7b5460'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-4, -86); ctx.quadraticCurveTo(1, model.reputation < 40 ? -91 : -82, 7, -87); ctx.strokeStyle = '#7b5460'; ctx.lineWidth = 1.2; ctx.stroke();
       // The laptop and visible catch rectangle share the same horizontal center.
       round(-29, -54, 58, 25, 3, '#b9aed0', ink, 1.8);
       round(-12, -49, 24, 13, 2, '#4e455f', '#7c6a94', .7);
@@ -315,7 +358,7 @@ export function createOfficeShell(canvas) {
 
   return {
     render(nextModel) {
-      if (!nextModel || !['ready', 'playing', 'paused'].includes(nextModel.phase)) return;
+      if (!nextModel || !['ready', 'playing', 'paused', 'promotion', 'demotion', 'victory', 'dismissed', 'contractReview'].includes(nextModel.phase)) return;
       model = { ...nextModel };
       draw();
     },

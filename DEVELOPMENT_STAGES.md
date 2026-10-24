@@ -20,8 +20,8 @@ Statuses: **Not started → In progress → Ready for playtest → Complete**. U
 | --- | --- | --- | --- |
 | 0 — Foundation and Sites | Tech-office shell with working start/reset | Can we open the intended game surface? | Complete |
 | 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | Complete |
-| 2 — Catch and dodge | Basic timed arcade run with retry | Are catches satisfying and hazards understandable? | Not started |
-| 3 — Complete career | All ranks, consequences, and endings | Can the whole game run correctly? | Not started |
+| 2 — Catch and dodge | Basic timed arcade run with retry | Are catches satisfying and hazards understandable? | In progress |
+| 3 — Complete career | All ranks, consequences, and endings | Can the whole game run correctly? | In progress |
 | 4 — Fairness and pacing | Balanced, repeatable three-minute challenge | Is success earned and another attempt appealing? | Not started |
 | 5 — Personality and craft | Cohesive art, reactions, sound, and comedy | Does each interaction show care? | Not started |
 | 6 — Fresh-player refinement | Revised build after observed play | Do new players enjoy it without coaching? | Not started |
@@ -269,4 +269,4 @@ Feedback to address:
 Next stage:
 ```
 
-Implementation status: Stages 0 and 1 are complete. The user authorized continuing without another approval gate, then requested an MVP-first pass. Next implement the Stage 2 arcade loop and Stage 3 full career; deferred polish is tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md). See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence and restart notes.
+Implementation status: Stages 0 and 1 are complete. The user authorized continuing without another approval gate, then requested an MVP-first pass. Stages 2 and 3 are being implemented together for the complete playable MVP; deferred polish is tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md). See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence and restart notes.
