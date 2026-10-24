@@ -1,6 +1,7 @@
 // Reproducible diagnostics, not a model of human skill or a public autoplay mode.
 // node scripts/measure-balance.mjs [--details] [--seeds=20]
 import { createSimulation } from '../src/simulation.js';
+import { INTERVIEWS } from '../src/interviews.js';
 import { CONTRACT_MS, ITEM_TYPES, TERMINAL_PHASES } from '../src/rules.js';
 import { CATCH_ZONE, LANE_CENTERS, TRANSITION_MS, REPEAT_MS, WORLD_HEIGHT } from '../src/movement.js';
 
@@ -84,6 +85,7 @@ function play(seed, policy, { lowTrust = false } = {}) {
   let firstCoffeeCaughtMs = null;
   let recoveredTrustMs = null;
   let inputPresses = 0;
+  let interviewPasses = 0;
   const observedIds = new Set();
   const hazardSpawnCounts = LANE_CENTERS.map(() => 0);
   const hazardWindows = [];
@@ -107,6 +109,14 @@ function play(seed, policy, { lowTrust = false } = {}) {
       }
     }
     if (lowTrust && recoveredTrustMs === null && snapshot.reputation >= 40) recoveredTrustMs = snapshot.elapsedMs;
+    if (snapshot.phase === 'interview') {
+      // Optimistic diagnostic: every quiz is answered correctly without reading time.
+      const question = INTERVIEWS.find(entry => entry.id === snapshot.interview.id);
+      if (!question) throw new Error(`Missing interview ${snapshot.interview.id}`);
+      simulation.answerInterview(question.answer);
+      simulation.continueInterview();
+      interviewPasses++;
+    }
     if (snapshot.phase !== 'playing') {
       if (held) simulation.release('diagnostic');
       held = 0;
@@ -148,7 +158,7 @@ function play(seed, policy, { lowTrust = false } = {}) {
     ceoSeconds: snapshot.phase === 'victory' ? seconds(snapshot.elapsedMs) : null,
     incidents: snapshot.stats.incidents, coffees: snapshot.stats.coffees, demotions: snapshot.stats.demotions,
     firstCoffeeSpawnSeconds: seconds(firstCoffeeSpawnMs), firstCoffeeCaughtSeconds: seconds(firstCoffeeCaughtMs),
-    recoveredTrustSeconds: seconds(recoveredTrustMs), inputPresses,
+    recoveredTrustSeconds: seconds(recoveredTrustMs), inputPresses, interviewPasses,
     hazardSpawnCounts, projectedHazardWindows: hazardWindows.length,
     minimumProjectedClearLanes: LANE_CENTERS.length - hazard.maxBlockedLanes,
     projectedZeroClearLaneSeconds: seconds(hazard.zeroClearLaneMs),
@@ -245,7 +255,7 @@ const recovery = {
   noEarlierCoffeeBy10sSeeds: recoveryRuns.filter(run => run.firstCoffeeSpawnSeconds >= 10).map(run => run.seed),
   unrecoveredSeeds: recoveryRuns.filter(run => run.recoveredTrustSeconds === null).map(run => run.seed),
 };
-console.log(JSON.stringify({ note: 'Snapshot-based bots are diagnostics, not human playtest evidence. Low-trust runs alone use a labeled controlled initial reputation.', stepMs: STEP_MS, policies: policies.map(policy => ({ ...policy, lookaheadMs: policy.lookaheadMs === Infinity ? 'all currently visible items' : policy.lookaheadMs })) }));
+console.log(JSON.stringify({ note: 'Snapshot-based bots are diagnostics, not human playtest evidence. All interviews are answered correctly immediately: quiz reading time and human success are not measured. Low-trust runs alone use a labeled controlled initial reputation.', stepMs: STEP_MS, policies: policies.map(policy => ({ ...policy, lookaheadMs: policy.lookaheadMs === Infinity ? 'all currently visible items' : policy.lookaheadMs })) }));
 for (const report of reports) console.log(JSON.stringify(report.summary));
 console.log(JSON.stringify(recovery));
 if (details) {

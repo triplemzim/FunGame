@@ -89,6 +89,16 @@ All numbers below are **starting values for playtesting**, not validated balance
 
 A run without demotions requires 2,370 promotion points. All eight ranks belong in the complete MVP; extensive rank-specific backgrounds do not. Use “Intern” as the short HUD label for Software Engineering Intern. This is a deliberately compressed startup career for arcade storytelling; agentic engineering is part of the work throughout the ladder rather than a separate promotion title.
 
+### Promotion interviews
+
+Filling the promotion bar with at least 40 trust unlocks one short Yes/No situational interview before every new rank, including CEO. The office, items, input, damage grace, spawns, and contract clock freeze while the question and its result are visible. Questions rotate within a rank and mix sensible Yes and No answers; sarcasm belongs in the feedback, while the right decision stays clear.
+
+- A correct answer displays approval and a joke. An explicit Continue grants the promotion, preserves normal overflow, and plays the promotion cue (or CEO ending).
+- A wrong answer displays “Promotion denied” with sarcastic feedback. Continue keeps the current rank, lifetime points, and trust, and sets promotion progress to one build below the current target (30 points). A fresh catch unlocks a different question.
+- Each question accepts one answer. Continue cannot bypass an unanswered interview; repeated activations cannot change a result or grant multiple promotions.
+- No countdown or automatic dismissal interrupts reading. Reset clears the run and pending interview. Focus loss cannot advance the frozen interview.
+- An interview earned at the final valid instant is still answerable. Passing the CEO interview wins; denial or a lower-rank promotion then resolves contract review as appropriate.
+
 ### Reputation and demotion
 
 - Start at 100 reputation; clamp to 0–100 after processing a collision batch.
@@ -105,7 +115,7 @@ A run without demotions requires 2,370 promotion points. All eight ranks belong 
 2. **Dismissed:** reputation reaches zero at Intern.
 3. **Contract review:** the 180-second active-play clock expires before CEO. Show highest rank, final rank, and a humorous review encouraging another attempt.
 
-Pause, focus loss, and short promotion/demotion transitions stop the active-play clock. The opening countdown and result animation do not consume contract time.
+Pause, focus loss, promotion interviews, and short promotion/demotion transitions stop the active-play clock. The opening countdown and result animation do not consume contract time.
 
 ## 6. Items, patterns, and pacing
 
@@ -209,15 +219,15 @@ Use buildless HTML/CSS/JavaScript with Canvas 2D for play and DOM elements for b
 
 Keep rules, ranks, spawn parameters, and dialogue in data modules. Keep one authoritative run-state object containing rank, highest rank, lifetime points, promotion progress, reputation, elapsed active time, items, input, grace timer, and statistics, including catches by item ID for contextual engineering reviews.
 
-States are `ready`, `playing`, `paused`, `promotion`, `demotion`, `victory`, `dismissed`, and `contractReview`. Each state owns allowed input and updates. All endings stop simulation and spawning before showing results.
+States are `ready`, `playing`, `paused`, `interview`, `promotion`, `demotion`, `victory`, `dismissed`, and `contractReview`. Each state owns allowed input and updates. All endings stop simulation and spawning before showing results.
 
 For each simulation step:
 
 1. Advance movement and gather unique collisions from swept positions so fast items do not skip the catch zone.
 2. Apply eligible hazard damage and coffee recovery, then clamp reputation. Add valid reward points.
 3. Resolve zero reputation first: dismissal or one demotion. If either occurs, do not promote during that step.
-4. Otherwise resolve one eligible promotion; reaching CEO wins.
-5. If still playing and time has expired, enter contract review. A valid CEO catch on the final step wins; zero-reputation dismissal takes priority over promotion.
+4. Otherwise open one eligible promotion interview. Only an accepted answer followed by Continue grants the promotion; reaching CEO then wins.
+5. If still playing and time has expired, enter contract review. An interview earned on the final step freezes expiry while awaiting its decision; zero-reputation dismissal takes priority over an interview.
 6. Remove processed/missed items, update the HUD, and queue feedback once.
 
 Use elapsed time consistently with a fixed simulation step and a capped catch-up window. Auto-pause on focus loss instead of simulating a long absence. Scale rendering for device pixel ratio, cap excessive render resolution if necessary, and map input from CSS bounds into logical game coordinates. Use game-world fall times so mobile layouts do not become harder simply because the canvas is shorter.

@@ -239,7 +239,8 @@ body[data-state="victory"] .results-overlay h2 { color: #f0d58d; }
 body[data-state="dismissed"] .results-overlay h2 { color: #f2b2a6; }
 body[data-state]:is([data-state="victory"], [data-state="dismissed"], [data-state="contractReview"]) .welcome-panel { display: none; }
 body[data-state]:not([data-state="ready"]) .item-legend { display: none; }
-body[data-state]:not([data-state="ready"]) .rank-label { max-width: 55%; text-align: center; transform: none; }
+body[data-state]:not([data-state="ready"]) .scene-actions { max-width: 65%; }
+body[data-state]:not([data-state="ready"]) .scene-actions .rank-label { max-width: 100%; min-width: 0; overflow-wrap: anywhere; text-align: center; transform: none; }
 body[data-state="promotion"] .rank-label { background: #dcebab; border-color: #89976c; }
 body[data-state="demotion"] .rank-label { background: #f0cbc3; border-color: #bd8f96; }
 
@@ -264,4 +265,35 @@ body[data-state="demotion"] .rank-label { background: #f0cbc3; border-color: #bd
   .results-stats dd { font-size: 10px; line-height: 1.25; }
   .results-overlay .primary-button { min-height: 48px; width: min(100%, 240px); }
   .event-message { font-size: 9px; }
+}
+
+/* Interviews pause the office while the player makes one consequential choice. */
+.interview-overlay { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 12px; padding: 26px 32px; background: #29243ef5; color: #f4effa; text-align: center; overflow-y: auto; outline-offset: -5px; }
+.interview-overlay > * { flex-shrink: 0; }
+.interview-kicker { margin: auto 0 0; color: #d8ee9b; font-size: 9px; font-weight: 800; letter-spacing: 2px; }
+.interview-overlay h2 { margin: 0; font-size: 27px; line-height: 1.15; letter-spacing: -.6px; }
+.interview-role { margin: -4px 0 0; color: #c7badb; font-size: 11px; line-height: 1.4; }
+.interview-question { max-width: 530px; margin: 0; font-size: 18px; line-height: 1.55; font-weight: 600; text-wrap: pretty; }
+.interview-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: min(100%, 340px); }
+.interview-answer { min-height: 48px; border: 2px solid #e2d9ef; border-radius: 8px; background: #f3eff8; color: #29243e; font: inherit; font-weight: 800; cursor: pointer; }
+.interview-answer:hover { background: #d8ee9b; border-color: #d8ee9b; }
+.interview-verdict { display: grid; gap: 8px; max-width: 540px; }
+.interview-verdict h3 { margin: 0; color: #d8ee9b; font-size: 20px; }
+.interview-overlay[data-verdict="denied"] .interview-verdict h3 { color: #f2b2a6; }
+.interview-verdict p { margin: 0; font-size: 13px; line-height: 1.55; }
+.interview-verdict .interview-consequence { color: #c7badb; font-size: 11px; }
+.interview-continue { width: min(100%, 300px); min-height: 48px; flex-shrink: 0; }
+.interview-note { margin: 0 0 auto; color: #c7badb; font-size: 10px; line-height: 1.4; }
+body[data-state="interview"] .movement-controls { display: none; }
+@media (max-width: 640px) {
+  .interview-overlay { position: fixed; inset: 12px; max-height: calc(100dvh - 24px); border: 2px solid #756380; border-radius: 12px; padding: 22px 20px; gap: 11px; }
+  .interview-kicker { font-size: 8px; letter-spacing: 1.5px; }
+  .interview-overlay h2 { font-size: 23px; }
+  .interview-role { font-size: 10px; }
+  .interview-question { font-size: 15px; line-height: 1.5; }
+  .interview-verdict { gap: 7px; }
+  .interview-verdict h3 { font-size: 18px; }
+  .interview-verdict p { font-size: 12px; }
+  .interview-verdict .interview-consequence { font-size: 10px; }
+  .interview-note { font-size: 9px; }
 }

@@ -358,7 +358,7 @@ export function createOfficeShell(canvas) {
 
   return {
     render(nextModel) {
-      if (!nextModel || !['ready', 'playing', 'paused', 'promotion', 'demotion', 'victory', 'dismissed', 'contractReview'].includes(nextModel.phase)) return;
+      if (!nextModel || !['ready', 'playing', 'paused', 'interview', 'promotion', 'demotion', 'victory', 'dismissed', 'contractReview'].includes(nextModel.phase)) return;
       model = { ...nextModel };
       draw();
     },

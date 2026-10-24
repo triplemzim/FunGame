@@ -35,6 +35,23 @@
             <div class="playfield-wrap">
               <canvas id="office-canvas" tabindex="0" role="img" aria-describedby="controls-help" aria-label="A new CS graduate wearing a lanyard at a desk with a stickered laptop and diploma, looking toward the corner office.">A software engineering intern's first desk in a bright tech office.</canvas>
               <div class="transition-banner" id="transition-banner" hidden><h2 id="transition-title"></h2><p id="transition-message"></p></div>
+              <section class="interview-overlay" id="interview-overlay" role="dialog" aria-modal="true" aria-labelledby="interview-title" aria-describedby="interview-question interview-note" tabindex="-1" hidden>
+                <p class="interview-kicker">PROMOTION INTERVIEW</p>
+                <h2 id="interview-title">One tiny HR form.</h2>
+                <p class="interview-role" id="interview-role"></p>
+                <p class="interview-question" id="interview-question"></p>
+                <div class="interview-choices" id="interview-choices">
+                  <button class="interview-answer" id="interview-yes" type="button">Yes</button>
+                  <button class="interview-answer" id="interview-no" type="button">No</button>
+                </div>
+                <div class="interview-verdict" id="interview-verdict" aria-live="polite" aria-atomic="true" hidden>
+                  <h3 id="interview-result"></h3>
+                  <p id="interview-feedback"></p>
+                  <p class="interview-consequence" id="interview-consequence"></p>
+                </div>
+                <button class="primary-button interview-continue" id="interview-continue" type="button" hidden>Continue <span aria-hidden="true">→</span></button>
+                <p class="interview-note" id="interview-note">Clock paused. Choose Yes or No. Your answer is final.</p>
+              </section>
               <div class="results-overlay" id="results-overlay" hidden>
                 <h2 id="result-title">Contract reviewed.</h2><p id="result-message"></p>
                 <dl class="results-stats">

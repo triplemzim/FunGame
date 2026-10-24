@@ -178,7 +178,7 @@ test('major events replace routine cues while bursts and lower-priority overlap 
 
 test('event and ending variants schedule distinct short cues', async () => {
   const signatures = new Map();
-  for (const [type, outcome] of [['catch'], ['coffee'], ['hit'], ['promotion'], ['demotion'], ['ending', 'victory'], ['ending', 'dismissed'], ['ending', 'contractReview']]) {
+  for (const [type, outcome] of [['catch'], ['coffee'], ['hit'], ['promotion'], ['demotion'], ['denied'], ['ending', 'victory'], ['ending', 'dismissed'], ['ending', 'contractReview']]) {
     const context = contextStub({ state: 'running' });
     const audio = createAudio({ contextFactory: () => context, storage: null });
     await audio.unlock();

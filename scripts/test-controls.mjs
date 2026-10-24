@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
+import { INTERVIEWS } from '../src/interviews.js';
 
 if (!vm.SourceTextModule) {
   throw new Error('Run with: node --experimental-vm-modules --test scripts/test-controls.mjs');
 }
 
-const [mainSource, movementSource, html, simulationSource, rulesSource, collisionSource, fairnessSource, audioSource] = await Promise.all([
+const [mainSource, movementSource, html, simulationSource, rulesSource, collisionSource, fairnessSource, audioSource, interviewsSource] = await Promise.all([
   readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/movement.js', import.meta.url), 'utf8'),
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
@@ -16,6 +17,7 @@ const [mainSource, movementSource, html, simulationSource, rulesSource, collisio
   readFile(new URL('../src/collision.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/fairness.js', import.meta.url), 'utf8'),
   readFile(new URL('../src/audio.js', import.meta.url), 'utf8'),
+  readFile(new URL('../src/interviews.js', import.meta.url), 'utf8'),
 ]);
 
 // Only the event, focus, and capture methods consumed by main.js are modeled.
@@ -68,7 +70,7 @@ async function playground({ initialState = null } = {}) {
   for (const element of elements.values()) {
     element.focus = () => { document.activeElement = element; };
   }
-  elements.get('game-card').contains = element => [...elements.values()].includes(element);
+  elements.get('game-card').contains = element => element !== elements.get('sound-button') && [...elements.values()].includes(element);
 
   const context = vm.createContext({
     document, window, queueMicrotask,
@@ -76,6 +78,7 @@ async function playground({ initialState = null } = {}) {
   });
   const movement = new vm.SourceTextModule(movementSource, { context, identifier: 'movement.js' });
   const audio = new vm.SourceTextModule(audioSource, { context, identifier: 'audio.js' });
+  const interviews = new vm.SourceTextModule(interviewsSource, { context, identifier: 'interviews.js' });
   const collision = new vm.SourceTextModule(collisionSource, { context, identifier: 'collision.js' });
   const fairness = new vm.SourceTextModule(fairnessSource, { context, identifier: 'fairness.js' });
   const rules = new vm.SourceTextModule(rulesSource, { context, identifier: 'rules.js' });
@@ -93,6 +96,7 @@ async function playground({ initialState = null } = {}) {
     if (specifier === './collision.js') return collision;
     if (specifier === './fairness.js') return fairness;
     if (specifier === './audio.js') return audio;
+    if (specifier === './interviews.js') return interviews;
     throw new Error(`Unexpected main.js dependency: ${specifier}`);
   };
   await main.link(link);
@@ -129,6 +133,7 @@ async function playground({ initialState = null } = {}) {
   return {
     elements, document, window, frames, tick, click, key, pointer,
     state: () => { const { lane, x, moving, direction, phase } = renders.at(-1); return { lane, x, moving, direction, phase }; },
+    model: () => renders.at(-1),
     start: () => click('start-button'),
   };
 }
@@ -256,6 +261,11 @@ for (const [outcome, initialState, title] of [
     const app = await playground({ initialState });
     app.start();
     app.tick(2);
+    if (outcome === 'victory') {
+      const question = INTERVIEWS.find(question => question.id === app.model().interview.id);
+      app.click(question.answer ? 'interview-yes' : 'interview-no');
+      app.click('interview-continue');
+    }
     assert.equal(app.state().phase, outcome);
     assert.equal(app.elements.get('result-title').textContent, title);
     assert.equal(app.elements.get('results-overlay').hidden, false);
@@ -272,3 +282,113 @@ for (const [outcome, initialState, title] of [
     assert.equal(app.document.activeElement, app.elements.get('office-canvas'));
   });
 }
+
+const interviewInitial = (rankIndex = 0, target = 150) => ({ rankIndex, promotionProgress: target - 30, items: [{ type: 'build', x: 320, y: 330, vy: 0 }] });
+
+test('interview freezes the office, shows a denial once, and resumes without losing lifetime score or rank', async () => {
+  const app = await playground({ initialState: interviewInitial() });
+  app.start();
+  app.tick();
+  assert.equal(app.state().phase, 'interview');
+  assert.equal(app.elements.get('interview-overlay').hidden, false);
+  assert.equal(app.elements.get('interview-choices').hidden, false);
+  assert.equal(app.document.activeElement, app.elements.get('interview-overlay'));
+  const frozen = app.model();
+  app.key('keydown', 'ArrowRight');
+  app.tick(120);
+  app.key('keyup', 'ArrowRight');
+  assert.equal(app.model().elapsedMs, frozen.elapsedMs);
+  assert.equal(app.model().x, frozen.x);
+  const question = INTERVIEWS.find(question => question.id === app.model().interview.id);
+  assert.equal(app.elements.get('interview-question').textContent, question.prompt);
+  app.click(question.answer ? 'interview-no' : 'interview-yes');
+  assert.equal(app.state().phase, 'interview');
+  assert.equal(app.elements.get('interview-result').textContent, 'Promotion denied.');
+  assert.equal(app.elements.get('interview-feedback').textContent, question.incorrectFeedback);
+  assert.equal(app.elements.get('interview-choices').hidden, true);
+  assert.equal(app.document.activeElement, app.elements.get('interview-continue'));
+  app.click(question.answer ? 'interview-yes' : 'interview-no');
+  assert.equal(app.model().interview.correct, false, 'a second activation cannot change the answer');
+  app.tick(120);
+  assert.equal(app.model().elapsedMs, frozen.elapsedMs);
+  app.click('interview-continue');
+  assert.equal(app.state().phase, 'playing');
+  assert.equal(app.model().promotionProgress, 120);
+  assert.equal(app.model().careerPoints, 30);
+  assert.equal(app.model().rankIndex, 0);
+  assert.equal(app.model().reputation, 100);
+  assert.equal(app.elements.get('interview-overlay').hidden, true);
+  assert.equal(app.document.activeElement, app.elements.get('office-canvas'));
+});
+
+test('correct answer requires explicit Continue before granting a promotion', async () => {
+  const app = await playground({ initialState: interviewInitial() });
+  app.start();
+  app.tick();
+  const question = INTERVIEWS.find(question => question.id === app.model().interview.id);
+  app.click('interview-continue');
+  assert.equal(app.state().phase, 'interview', 'Continue cannot bypass an unanswered question');
+  app.click(question.answer ? 'interview-yes' : 'interview-no');
+  assert.equal(app.elements.get('interview-result').textContent, 'Promotion approved.');
+  assert.equal(app.elements.get('hud-rank').textContent, 'Intern');
+  const frozenTime = app.model().elapsedMs;
+  app.tick(90);
+  assert.equal(app.model().elapsedMs, frozenTime);
+  app.click('interview-continue');
+  assert.equal(app.state().phase, 'promotion');
+  assert.equal(app.model().rankIndex, 1);
+  app.tick(45);
+  assert.equal(app.state().phase, 'playing');
+  assert.equal(app.model().x, 320, 'answering cannot leave held movement behind');
+});
+
+test('interview keyboard focus cycles through available answers and result Continue', async () => {
+  const app = await playground({ initialState: interviewInitial() });
+  app.start();
+  app.tick();
+  app.key('keydown', 'Tab');
+  assert.equal(app.document.activeElement, app.elements.get('interview-yes'));
+  app.key('keydown', 'Tab', { shiftKey: true });
+  assert.equal(app.document.activeElement, app.elements.get('interview-no'));
+  app.key('keydown', 'Tab');
+  assert.equal(app.document.activeElement, app.elements.get('interview-yes'));
+  app.click('interview-no');
+  app.key('keydown', 'Tab');
+  assert.equal(app.document.activeElement, app.elements.get('interview-continue'));
+  app.key('keydown', 'Tab', { shiftKey: true });
+  assert.equal(app.document.activeElement, app.elements.get('interview-continue'));
+});
+
+test('focus loss keeps an interview frozen and reset removes its pending question', async () => {
+  const app = await playground({ initialState: interviewInitial() });
+  app.start();
+  app.tick();
+  const questionId = app.model().interview.id;
+  const time = app.model().elapsedMs;
+  app.window.emit('blur');
+  app.document.hidden = true;
+  app.document.emit('visibilitychange');
+  app.tick(120);
+  assert.equal(app.state().phase, 'interview');
+  assert.equal(app.model().interview.id, questionId);
+  assert.equal(app.model().elapsedMs, time);
+  app.document.hidden = false;
+  app.click('reset-button');
+  assert.equal(app.state().phase, 'ready');
+  assert.equal(app.model().interview, null);
+  assert.equal(app.elements.get('interview-overlay').hidden, true);
+});
+
+test('a double tap on final interview Continue cannot activate the newly revealed Retry', async () => {
+  const app = await playground({ initialState: interviewInitial(6, 520) });
+  app.start();
+  app.tick();
+  const question = INTERVIEWS.find(question => question.id === app.model().interview.id);
+  app.click(question.answer ? 'interview-yes' : 'interview-no');
+  app.click('interview-continue', { detail: 1, timeStamp: 1000 });
+  assert.equal(app.state().phase, 'victory');
+  app.click('retry-button', { detail: 2, timeStamp: 1100 });
+  assert.equal(app.state().phase, 'victory');
+  app.click('retry-button', { detail: 1, timeStamp: 1500 });
+  assert.equal(app.state().phase, 'playing', 'a fresh retry remains available');
+});

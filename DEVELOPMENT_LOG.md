@@ -193,3 +193,23 @@ What to try: Start with Sound On, catch a build, catch a bug, and earn a promoti
 Source checkpoint: `bfd7217465a50ea6e15dda38215d6ab23619c6e4`, pushed to GitHub `codex/stage-0-foundation` and the Sites-managed source. Public Sites version **6**, saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_09f6156824e08191b8897a16d49a88f3`, deployment ID `appgdep_6adc8d68abe08191ae7d4fb46468554a`. Deployment succeeded at https://career-catcher-fungame.tenderstoat19.chatgpt.site. The release archive contains 11 static files plus the hosting manifest. Audience remains public; version 5 is retained as the previous checkpoint.
 
 Hosted verification: The existing public URL loaded the Sound On control. Start entered playing and reported audio running; no browser warnings/errors were captured. The sound controller and event routing were independently reviewed for promotion and bug-hit playback. The user’s existing local run was not reset during this verification. Screenshot evidence: career-catcher-sound.png in the task visualization folder. Refresh an already-open game to load this version, then select Start with Sound On.
+
+## Promotion interviews — engagement checkpoint
+
+Date: 24 October 2026 (Asia/Singapore).
+
+Stage and status: Ready for player review; public release pending. This is the player's approved interaction addition to Stages 4/5. Broader enjoyment, artwork, and fresh-player checks remain open.
+
+What changed: Every promotion, including CEO, requires a short situational Yes/No interview. There are 21 rank-specific questions, three per promotion, with mixed Yes and No answers and sarcastic feedback. The approved lunch/outage example is included. The office, input, items, spawns, damage grace, and contract freeze while answering and reading the result. A correct answer plus explicit Continue grants the promotion. An incorrect answer denies it, leaves rank/lifetime points/trust intact, and sets promotion progress one build below the target; another build offers a different question. Duplicate answers cannot change a verdict. Missed items still have no penalty.
+
+Validation:
+
+- All 66 current functional checks passed: 22 simulation, 16 UI/input, 11 movement, eight fairness, nine audio. New checks cover frozen unanswered/answered interviews, early/duplicate Continue, invalid/duplicate answers, penalty and different-question retry, all seven promotions, final-instant CEO/contract resolution, reset, keyboard focus, denial feedback, and final-screen double taps.
+- A normal local run reached its first interview after roughly 20 active seconds with 150 points and 100 trust. Keyboard Tab/Enter answered correctly; the result remained frozen until Continue, which promoted to Junior Software Engineer.
+- An isolated temporary browser fixture (outside the deployable checkout) verified denial and preserved score/rank/trust. The longest combined prompt/denial was tested at 375 × 667. The phone dialog fits the viewport with its 48-pixel Continue visible, no horizontal overflow, and no unreachable top content. The responsive override was reset.
+- Native browser double-click testing found that final Continue could activate the newly revealed Retry. A short pointer guard fixes this; the same native double-click now leaves CEO victory visible. A fresh subsequent retry remains available in the integration check.
+- Independent reviews covered the simulation and UI. No captured browser warnings/errors occurred during the local normal/controlled scenarios. Audio approval continues to play when promotion is granted; denial has a distinct short cue.
+- The diagnostic now explicitly answers interviews correctly and labels this optimistic assumption. Existing balance tables predate interviews and remain historical, not evidence of human judgement, reading time, or enjoyment.
+- Static preparation passed with 12 files and all local references verified. No controlled QA state or debug controls are included in the public package.
+
+What to try: Fill a promotion bar, answer one question incorrectly, read the joke, and Continue. Catch another build for a different question, answer it sensibly, and Continue to the new title. Read at your own pace: the contract stays paused throughout each interview.

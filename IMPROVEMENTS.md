@@ -44,3 +44,7 @@ The player reported that repeating only builds, coffee, and bugs feels boring. T
 - **Proposed meaningful pickups:** introduce a shield or brief slow-time effect so additional item types change decisions, not just appearance.
 
 Retain the no-penalty miss behavior until a replacement rule is deliberately selected and tested against rewards that may be unsafe to chase.
+
+## Promotion interview checkpoint
+
+The player approved adding short, sarcastic Yes/No situational questions before each promotion. This adds a decision to the current three-item loop. Every rank has rotating questions with clear sensible answers. Wrong answers temporarily deny promotion and require one more build for a different question; lifetime score, current rank, and trust are preserved. The game and contract clock remain frozen until the player reads feedback and selects Continue. This does not implement the earlier three-missed-items demotion proposal. Fresh-player enjoyment and whether seven interviews feel too repetitive still need playtesting.

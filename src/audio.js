@@ -7,6 +7,7 @@ const CUES = {
   hit: { priority: 4, cooldown: .22, notes: [[180, 0, .15, 85], [110, .025, .08]] },
   promotion: { priority: 6, cooldown: .32, notes: [[520, 0, .09], [660, .075, .09], [880, .15, .15]] },
   demotion: { priority: 6, cooldown: .32, notes: [[660, 0, .08], [440, .07, .09], [280, .14, .14]] },
+  denied: { priority: 6, cooldown: .32, notes: [[330, 0, .08], [220, .09, .12]] },
   'ending:victory': { priority: 10, cooldown: .45, notes: [[523, 0, .09], [659, .075, .09], [784, .15, .1], [1047, .23, .15]] },
   'ending:dismissed': { priority: 10, cooldown: .45, notes: [[300, 0, .12, 220], [155, .13, .19]] },
   'ending:contractReview': { priority: 10, cooldown: .45, wave: 'sine', notes: [[392, 0, .085], [349, .09, .08], [294, .18, .13]] },

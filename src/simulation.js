@@ -1,4 +1,5 @@
 import { createMovement, LANE_CENTERS, CATCH_ZONE, WORLD_HEIGHT } from './movement.js';
+import { selectInterviewQuestion } from './interviews.js';
 import { sweptCatch } from './collision.js';
 import { canSpawnHazard, canSpawnCoffee } from './fairness.js';
 export { sweptCatch } from './collision.js';
@@ -50,6 +51,9 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
   let random;
   let activeSeed;
   let usedIds;
+  let interview;
+  let interviewQuestion;
+  let interviewAttempts;
 
   function event(type, text, extra = {}) {
     notice = text;
@@ -74,6 +78,9 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
     events = [];
     sequence = 1;
     usedIds = new Set();
+    interview = null;
+    interviewQuestion = null;
+    interviewAttempts = RANKS.map(() => 0);
     spawnRemainingMs = 250;
     lastCoffeeSpawnMs = 0;
     firstSpawn = true;
@@ -151,18 +158,48 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
     }
     if (target && reputation < PROMOTION_REPUTATION) promotionProgress = Math.min(promotionProgress, target);
     if (target && reputation >= PROMOTION_REPUTATION && promotionProgress >= target) {
-      promotionProgress -= target;
-      rankIndex++;
-      highestRank = Math.max(highestRank, rankIndex);
-      stats.promotionTimes.push({ rankIndex, elapsedMs });
+      const targetRankIndex = rankIndex + 1;
+      interviewQuestion = selectInterviewQuestion(targetRankIndex, interviewAttempts[targetRankIndex]++, activeSeed);
+      interview = { id: interviewQuestion.id, prompt: interviewQuestion.prompt, targetRankIndex,
+        answered: false, correct: null, feedback: '' };
+      phase = 'interview';
       movement.clearInput();
-      event('promotion', RANKS[rankIndex].joke, { rankIndex, rankName: RANKS[rankIndex].shortName });
-      if (rankIndex === RANKS.length - 1) finish('victory');
-      else {
-        phase = 'promotion';
-        transitionRemainingMs = PROMOTION_MS;
-      }
+      event('interview', `Promotion interview: ${RANKS[targetRankIndex].shortName}.`, { targetRankIndex, interviewId: interview.id });
     }
+  }
+
+  function answerInterview(answer) {
+    if (phase !== 'interview' || !interview || interview.answered || typeof answer !== 'boolean') return false;
+    interview.answered = true;
+    interview.correct = answer === interviewQuestion.answer;
+    interview.feedback = interview.correct ? interviewQuestion.correctFeedback : interviewQuestion.incorrectFeedback;
+    return true;
+  }
+
+  function continueInterview() {
+    if (phase !== 'interview' || !interview?.answered) return false;
+    const { correct, feedback, targetRankIndex } = interview;
+    interview = null;
+    interviewQuestion = null;
+    movement.clearInput();
+    if (!correct) {
+      promotionProgress = Math.max(0, Math.min(promotionProgress, RANKS[rankIndex].target) - 30);
+      phase = 'playing';
+      event('interviewDenied', `${feedback} Catch one more build to try again.`, { targetRankIndex });
+      if (elapsedMs + EPSILON >= CONTRACT_MS) finish('contractReview');
+      return true;
+    }
+    promotionProgress -= RANKS[rankIndex].target;
+    rankIndex = targetRankIndex;
+    highestRank = Math.max(highestRank, rankIndex);
+    stats.promotionTimes.push({ rankIndex, elapsedMs });
+    event('promotion', RANKS[rankIndex].joke, { rankIndex, rankName: RANKS[rankIndex].shortName });
+    if (rankIndex === RANKS.length - 1) finish('victory');
+    else {
+      phase = 'promotion';
+      transitionRemainingMs = PROMOTION_MS;
+    }
+    return true;
   }
 
   function applyCollisionBatch(collisions) {
@@ -260,9 +297,9 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
   }
 
   function update(dtMs) {
-    if (!Number.isFinite(dtMs) || dtMs <= 0 || phase === 'ready' || phase === 'paused' || TERMINAL_PHASES.includes(phase)) return;
+    if (!Number.isFinite(dtMs) || dtMs <= 0 || phase === 'ready' || phase === 'paused' || phase === 'interview' || TERMINAL_PHASES.includes(phase)) return;
     let remaining = dtMs;
-    while (remaining > EPSILON && !TERMINAL_PHASES.includes(phase)) {
+    while (remaining > EPSILON && phase !== 'interview' && !TERMINAL_PHASES.includes(phase)) {
       if (phase === 'promotion' || phase === 'demotion') {
         const consumed = Math.min(remaining, transitionRemainingMs);
         transitionRemainingMs = Math.max(0, transitionRemainingMs - consumed);
@@ -308,14 +345,14 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
       promotionPending: progression && reputation < PROMOTION_REPUTATION && promotionProgress >= RANKS[rankIndex].target,
       items: items.map((item) => ({ ...item })),
       stats: { ...stats, byType: { ...stats.byType }, promotionTimes: stats.promotionTimes.map((time) => ({ ...time })) },
-      notice, seed: activeSeed,
+      notice, seed: activeSeed, interview: interview ? { ...interview } : null,
     };
   }
 
   reset();
   return {
     get phase() { return phase; },
-    start, reset, pause, resume, update, snapshot,
+    start, reset, pause, resume, update, snapshot, answerInterview, continueInterview,
     press(source, direction) { if (phase === 'playing') movement.press(source, direction); },
     release(source) { movement.release(source); },
     clearInput() { movement.clearInput(); },

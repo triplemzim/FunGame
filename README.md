@@ -21,8 +21,8 @@ The preparation script recreates `dist/` from `index.html`, `src/`, and any loca
 
 1. Select **Start First Day**. Use Left/Right arrows or A/D; hold to repeat across five lanes. The direction buttons use the same rules.
 2. Catch green checkmarks with the outlined laptop for **30 points**. Coffee restores **12 team trust**; coral bugs cost **30**. Missing items has no penalty.
-3. Fill the next-promotion bar while keeping at least **40 trust**. At zero trust, lose one rank and regain 45 trust; at Intern, the run ends.
-4. Press Escape or **Pause**. Choose **Resume Work** to continue. Leaving focus pauses the contract and clears held input.
+3. Fill the next-promotion bar while keeping at least **40 trust**, then answer a sarcastic **Yes/No promotion interview**. The clock pauses while you answer and read the result. Correct answers approve promotion; a wrong answer leaves you one green build from a different question, with rank, lifetime points, and trust preserved. Choose Continue to return to work. At zero trust, lose one rank and regain 45 trust; at Intern, the run ends.
+4. Press Escape or **Pause**. Choose **Resume Work** to continue. Leaving focus pauses active play and clears held input. Interviews already freeze the office and remain open when focus changes.
 5. Use **Sound On/Off** to mute or unmute short event cues. The preference is remembered when browser storage is available. Audio begins on a user gesture.
 6. Reach CEO, get dismissed, or finish the 180-second contract. Review the actual run stats and select **Try Another Career**.
 
@@ -43,7 +43,7 @@ node scripts/measure-balance.mjs
 node scripts/measure-balance.mjs --details --seeds=20
 ```
 
-These seeded movement policies check feasibility, pacing, lane coverage, and recovery. They use exact visible-object geometry and are not human playtest results. See [the Stage 4 balance report](BALANCE_REPORT.md) for before/after results and retained tuning values.
+These seeded movement policies check feasibility, pacing, lane coverage, and recovery. The diagnostic explicitly answers interviews correctly; it does not measure human judgement or reading time. They use exact visible-object geometry and are not human playtest results. See [the Stage 4 balance report](BALANCE_REPORT.md) for before/after results and retained tuning values.
 
 ## Project references
 

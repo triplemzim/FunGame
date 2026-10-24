@@ -16,6 +16,10 @@ const retryButton = find('retry-button');
 const leftButton = find('move-left');
 const rightButton = find('move-right');
 const soundButton = find('sound-button');
+const interviewOverlay = find('interview-overlay');
+const interviewYes = find('interview-yes');
+const interviewNo = find('interview-no');
+const interviewContinue = find('interview-continue');
 const audio = createAudio();
 const simulation = createSimulation();
 const shell = createOfficeShell(canvas);
@@ -29,6 +33,8 @@ let lastFrame = null;
 let accumulator = 0;
 let announcedLane = -1;
 let presentedPhase = null;
+let presentedInterview = null;
+let lastInterviewContinueTime = -Infinity;
 let pauseReason = 'manual';
 let feedback = { text: '', until: 0, priority: 0 };
 
@@ -86,8 +92,10 @@ function present({ focus } = {}) {
     find('pause-overlay').hidden = phase !== 'paused';
     find('results-overlay').hidden = !terminal;
     find('transition-banner').hidden = !['promotion', 'demotion'].includes(phase);
+    interviewOverlay.hidden = phase !== 'interview';
+    canvas.setAttribute('tabindex', phase === 'interview' ? '-1' : '0');
     leftButton.disabled = rightButton.disabled = phase !== 'playing';
-    setText('state-title', phase === 'paused' ? 'A well-earned breather.' : terminal ? 'Your next chapter awaits.' : active ? 'Ship it. Keep moving.' : 'Ready for your first day?');
+    setText('state-title', phase === 'interview' ? 'HR has one quick question.' : phase === 'paused' ? 'A well-earned breather.' : terminal ? 'Your next chapter awaits.' : active ? 'Ship it. Keep moving.' : 'Ready for your first day?');
     setText('state-description', active ? 'Catch green builds. Dodge production bugs. Coffee restores team trust.' : 'Degree acquired. Production access pending.');
     setText('scene-caption', active ? '' : 'New degree. First desk. Big ambitions.');
     setText('action-note', active ? 'Missed items are harmless. Every catch counts.' : 'Arrow keys or A / D. Your first move starts here.');
@@ -98,18 +106,37 @@ function present({ focus } = {}) {
     else if (phase === 'paused') setText('movement-status', 'Paused. Choose Resume Work to continue.');
     else { announcedLane = -1; setText('movement-status', active ? 'Move with the left and right controls.' : ''); }
     if (terminal) focus = retryButton;
+    else if (phase !== 'interview' && presentedInterview !== null) focus = canvas;
   }
+  if (phase === 'interview' && model.interview) {
+    const interview = model.interview;
+    const stage = `${interview.id}:${interview.answered}`;
+    setText('interview-role', `Next role: ${rankName(interview.targetRankIndex)}`);
+    setText('interview-question', interview.prompt);
+    find('interview-choices').hidden = interview.answered;
+    interviewYes.disabled = interviewNo.disabled = interview.answered;
+    find('interview-verdict').hidden = !interview.answered;
+    interviewContinue.hidden = !interview.answered;
+    interviewOverlay.dataset.verdict = !interview.answered ? 'pending' : interview.correct ? 'approved' : 'denied';
+    setText('interview-result', interview.correct ? 'Promotion approved.' : 'Promotion denied.');
+    setText('interview-feedback', interview.feedback || '');
+    setText('interview-consequence', interview.correct ? 'Your new title is waiting. The salary email is apparently still loading.' : 'One more green build earns a new question. Your rank, career points, and trust are safe.');
+    setText('interview-note', interview.answered ? 'Clock still paused. Continue when you’re ready.' : 'Clock paused. Choose Yes or No. Your answer is final.');
+    if (stage !== presentedInterview) focus = interview.answered ? interviewContinue : interviewOverlay;
+    presentedInterview = stage;
+  } else presentedInterview = null;
   let cue = null;
   for (const event of simulation.drainEvents()) {
     const priority = ['ending', 'promotion', 'demotion'].includes(event.type) ? 3 : event.type === 'hit' ? 2 : 1;
     const cuePriority = event.type === 'ending' ? 4 : priority;
-    if (!cue || cuePriority >= cue.priority) cue = { event, priority: cuePriority };
+    const soundType = event.type === 'interviewDenied' ? 'denied' : event.type;
+    if (['catch', 'coffee', 'hit', 'promotion', 'demotion', 'ending', 'denied'].includes(soundType) && (!cue || cuePriority >= cue.priority)) cue = { event, soundType, priority: cuePriority };
     if (priority >= feedback.priority || model.elapsedMs >= feedback.until) {
       const defaults = { catch: `+${event.points || 30} points. All checks passed.`, coffee: '+12 team trust. Critical infrastructure restored.', hit: 'Production incident. −30 team trust.', promotion: `Promoted to ${rankName(model.rankIndex)}.`, demotion: 'Access downgraded. A fresh climb starts here.' };
       feedback = { text: event.message || event.text || defaults[event.type] || '', until: model.elapsedMs + 1700, priority };
     }
   }
-  if (cue && phase !== 'ready' && phase !== 'paused') audio.play(cue.event.type, cue.event.outcome);
+  if (cue && phase !== 'ready' && phase !== 'paused') audio.play(cue.soundType, cue.event.outcome);
   if (model.elapsedMs >= feedback.until && phase === 'playing') feedback = { text: '', until: 0, priority: 0 };
   setText('event-message', feedback.text || (phase === 'playing' ? 'Catch wins. Dodge bugs. Keep your team’s trust.' : ''));
   find('event-message').dataset.kind = feedback.priority > 1 ? 'important' : 'routine';
@@ -175,7 +202,11 @@ function pause(reason = 'manual') {
   present({ focus: reason === 'manual' ? resumeButton : undefined });
 }
 startButton.addEventListener('click', () => { if (simulation.phase === 'ready') startRun(); });
-retryButton.addEventListener('click', () => { if (terminalPhases.has(simulation.phase)) startRun(); });
+retryButton.addEventListener('click', (event) => {
+  // A second tap on the final interview must not activate newly revealed Retry.
+  if (event.detail > 0 && event.timeStamp - lastInterviewContinueTime < 400) return;
+  if (terminalPhases.has(simulation.phase)) startRun();
+});
 resetButton.addEventListener('click', () => {
   audio.stop();
   clearControls();
@@ -193,11 +224,45 @@ resumeButton.addEventListener('click', () => {
   present({ focus: canvas });
 });
 
+for (const [button, answer] of [[interviewYes, true], [interviewNo, false]]) {
+  button.addEventListener('click', () => {
+    if (simulation.phase !== 'interview') return;
+    unlockSound();
+    simulation.answerInterview(answer);
+    resetTiming();
+    present();
+  });
+}
+interviewContinue.addEventListener('click', (event) => {
+  if (simulation.phase !== 'interview' || !simulation.snapshot().interview?.answered) return;
+  lastInterviewContinueTime = Number.isFinite(event.timeStamp) ? event.timeStamp : -Infinity;
+  unlockSound();
+  simulation.continueInterview();
+  resetTiming();
+  present();
+});
+
 function ownsFocus() {
   return gameCard.contains(document.activeElement) || document.activeElement === soundButton;
 }
 
 window.addEventListener('keydown', (event) => {
+  if (simulation.phase === 'interview' && event.key === 'Tab') {
+    const buttons = simulation.snapshot().interview?.answered ? [interviewContinue] : [interviewYes, interviewNo];
+    const first = buttons[0];
+    const last = buttons.at(-1);
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    } else if (!buttons.includes(document.activeElement)) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus({ preventScroll: true });
+    }
+    return;
+  }
   if (!ownsFocus() || event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.target === canvas && ['Enter', 'Space'].includes(event.code)
       && (simulation.phase === 'ready' || terminalPhases.has(simulation.phase))) {

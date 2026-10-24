@@ -2,6 +2,8 @@
 
 Status: Technical fairness checks complete; engagement needs refinement. The player found the three repeated item categories boring and suggested miss consequences. Automated measurements do not establish enjoyment; human pacing and perceived fairness remain open.
 
+The tables below predate promotion interviews. Current diagnostics explicitly choose correct answers and continue; active-time feasibility excludes reading time and wrong-answer setbacks. These older results are retained as historical checkpoints.
+
 ## Baseline
 
 The baseline uses the MVP simulation from source `8aa3799b533e90c851031557e8e642719b82c50a` (public Sites version 4). The diagnostic script runs seeds 1–20 through ordinary press/release movement. It observes currently visible items, never future random spawns, and does not teleport the employee or award points directly.
