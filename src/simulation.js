@@ -1,4 +1,7 @@
-import { createMovement, LANE_CENTERS, CATCH_ZONE, WORLD_HEIGHT, TRANSITION_MS } from './movement.js';
+import { createMovement, LANE_CENTERS, CATCH_ZONE, WORLD_HEIGHT } from './movement.js';
+import { sweptCatch } from './collision.js';
+import { canSpawnHazard, canSpawnCoffee } from './fairness.js';
+export { sweptCatch } from './collision.js';
 import { CONTRACT_MS, DAMAGE_GRACE_MS, PROMOTION_REPUTATION, DEMOTION_REPUTATION, PROMOTION_MS, DEMOTION_MS, RANKS, ITEM_TYPES, TERMINAL_PHASES } from './rules.js';
 
 const EPSILON = 1e-7;
@@ -20,27 +23,6 @@ function seededRandom(seed) {
     result ^= result + Math.imul(result ^ result >>> 7, 61 | result);
     return ((result ^ result >>> 14) >>> 0) / 4294967296;
   };
-}
-
-function overlapInterval(from, to, min, max) {
-  const delta = to - from;
-  if (Math.abs(delta) < EPSILON) return from >= min && from <= max ? [0, 1] : null;
-  const a = (min - from) / delta;
-  const b = (max - from) / delta;
-  const enter = Math.max(0, Math.min(a, b));
-  const exit = Math.min(1, Math.max(a, b));
-  return enter <= exit + EPSILON ? [enter, exit] : null;
-}
-
-// Intersect both axes in time: crossing X later cannot catch an item that passed Y earlier.
-export function sweptCatch(item, previousY, nextY, previousX, nextX) {
-  const horizontal = overlapInterval(item.x - previousX, item.x - nextX,
-    -CATCH_ZONE.halfWidth - item.halfWidth, CATCH_ZONE.halfWidth + item.halfWidth);
-  const vertical = overlapInterval(previousY, nextY, CATCH_ZONE.y - item.halfHeight,
-    CATCH_ZONE.y + CATCH_ZONE.height + item.halfHeight);
-  if (!horizontal || !vertical) return null;
-  const enter = Math.max(horizontal[0], vertical[0]);
-  return enter <= Math.min(horizontal[1], vertical[1]) + EPSILON ? enter : null;
 }
 
 // initialState/spawnEnabled are module-only controlled QA options, never public UI controls.
@@ -219,25 +201,6 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
     resolveCareer();
   }
 
-  function impactAfterMs(item) {
-    return Math.max(0, (CATCH_ZONE.y - item.halfHeight - item.y) / item.vy * 1000);
-  }
-
-  function laneSafe(lane, impactMs, forHazard = false) {
-    const blocked = new Set();
-    for (const item of items) {
-      if (item.type === 'bug' && Math.abs(impactAfterMs(item) - impactMs) < 450) {
-        const nearest = LANE_CENTERS.reduce((best, center, index) => Math.abs(center - item.x) < Math.abs(LANE_CENTERS[best] - item.x) ? index : best, 0);
-        blocked.add(nearest);
-      }
-    }
-    if (!forHazard) return !blocked.has(lane);
-    blocked.add(lane);
-    const playerX = movement.snapshot().x;
-    return LANE_CENTERS.some((center, index) => !blocked.has(index)
-      && Math.abs(center - playerX) / 112 * TRANSITION_MS + 250 < impactMs);
-  }
-
   function spawn() {
     const fallMs = 2800 - clamp(difficulty / 6, 0, 1) * 1000;
     let type;
@@ -249,12 +212,15 @@ export function createSimulation({ seed, progression = true, spawnEnabled = true
       if (type === 'bug' && elapsedMs < 4000) type = 'build';
     }
     let lane = firstSpawn ? movement.snapshot().lane : Math.floor(random() * LANE_CENTERS.length);
+    const vy = (CATCH_ZONE.y + 20) / (fallMs / 1000);
     if (type === 'bug' || type === 'coffee') {
-      const eligible = LANE_CENTERS.map((_, index) => index).filter((index) => laneSafe(index, fallMs, type === 'bug'));
+      const eligible = LANE_CENTERS.map((_, index) => index).filter((index) => {
+        const candidate = { type, x: LANE_CENTERS[index], y: -20, vy, halfWidth: 15, halfHeight: 15 };
+        return type === 'bug' ? canSpawnHazard(movement, items, candidate) : canSpawnCoffee(movement, items, candidate);
+      });
       if (!eligible.length) type = 'build';
       else if (!eligible.includes(lane)) lane = eligible[Math.floor(random() * eligible.length)];
     }
-    const vy = (CATCH_ZONE.y + 20) / (fallMs / 1000);
     items.push(normalizeItem({ type, x: LANE_CENTERS[lane], y: -20, vy }));
     if (type === 'coffee') lastCoffeeSpawnMs = elapsedMs;
     firstSpawn = false;

@@ -139,3 +139,29 @@ Hosted verification: The Site opened without sign-in. At 375 × 667, the directi
 What to try: Start First Day; catch green builds and coffee, dodge coral bugs; fill the promotion bar while retaining 40 trust; pause and resume; reach an ending and retry. All three ending/rule paths were verified in controlled tests. A normal browser dismissal and normal seeded-bot CEO outcomes were observed separately; no fresh-player enjoyment claim is made.
 
 Next: User play of the complete MVP. Stage 4–7 refinement, sound, additional variants, broader playtesting, and release preparation remain deferred under the latest MVP-first instruction and are tracked in IMPROVEMENTS.md.
+
+
+## Stage 4 Fairness and pacing
+
+Date: 24 October 2026 (Asia/Singapore).
+
+Stage and status: In progress; automated baseline, path-guard implementation, and post-change measurements passed. Hosted checkpoint pending. Human comfort and perceived fairness remain playtest gaps.
+
+What changed: Replaced the impact-neighborhood/destination heuristic with conservative direct escape and coffee-catch checks. Independent movement clones preserve held input, repeat timers, and in-flight transitions. Shared swept collision checks the full reaction, transit, and waiting path. No scoring, movement speed, spawn-rate, fall-speed, or promotion target values changed.
+
+Why: The old heuristic estimated a held four-lane journey as 440 ms instead of 650 ms and ignored danger during transit. No unavoidable normal-pattern counterexample was found in the baseline probe; this strengthens the placement rule without claiming that existing normal patterns were broken.
+
+Checks and measured evidence:
+
+- Eight new fairness/clone checks passed; 11 movement, 16 career/simulation, and 11 input/UI checks also passed (46 total).
+- Twenty seeded runs for each of three moving policies all reached CEO after the change. CEO medians were 127.58, 127.17, and 126.93 active seconds. First catch stayed at 2.93 seconds.
+- Every lane received hazards; the 300 ms policy observed counts 155/170/150/126/166 for lanes 1–5. No projected all-lane wall occurred in the measured set, and the placement guard separately checks a reachable path.
+- Stationary play produced 11 dismissals, nine contract reviews, and zero CEO wins. It took an average 6.55 hits; it is not immune. Five of 24 stationary-policy demotions were followed by regaining the previous rank.
+- All 20 controlled runs starting at 20 trust recovered to at least 40, with a median 17.88 seconds. This is explicitly controlled recovery evidence.
+- Full before/after values, diagnostic limits, and repeatable commands are in BALANCE_REPORT.md. The diagnostic completed in under a second on this development machine; that is not a phone performance benchmark.
+
+Selected tuning: Retain 110 ms lane transitions, 180 ms held repeat, existing rank targets and spawn/fall settings; placement uses a 250 ms reaction margin. Exact-geometry bot promotions are faster than the directional human targets, so those targets are not marked passed and are not used alone to justify raising difficulty.
+
+Known limitations: Direct-path rejection is conservative, not an exhaustive planner; rejected hazard/coffee candidates may become rewards. Physical touch comfort, human pacing, and whether players can explain their hits remain unverified. Presentation/audio work stays deferred.
+
+Next: Publish and verify the same public Site, then collect player feedback on movement and perceived fairness.

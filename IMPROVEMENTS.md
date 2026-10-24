@@ -7,7 +7,7 @@ The user requested an MVP-first pass on 24 October 2026. The complete MVP now im
 | Priority | Improvement | Why it matters | Status |
 | --- | --- | --- | --- |
 | High | Tune movement transition/repeat timing using player feedback | Find a comfortable speed on keyboard and touch | Deferred; current values 110 ms / 180 ms |
-| High | Measure first catch, promotions, Manager, and skilled CEO timing across seeds | Make the three-minute challenge achievable and engaging | Deferred; ideal bot feasibility measured, human tuning remains |
+| High | Measure first catch, promotions, Manager, and skilled CEO timing across seeds | Make the three-minute challenge achievable and engaging | Stage 4 automated baseline measured; human tuning remains; see BALANCE_REPORT.md |
 | High | Observe roughly five fresh players without coaching | Find confusing goals, unfair hits, and weak replay motivation | Deferred |
 | High | Test physical phone touch, multi-touch cancellation, and focus interruption | Confirm real-device input behavior beyond desktop pointer checks | Deferred; shared model and input-routing checks exist |
 | Medium | Richer employee reactions, movement lean, catch pop, and rank celebrations | Make catches and consequences feel satisfying | Deferred; keep simple matching feedback in MVP |

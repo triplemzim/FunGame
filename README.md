@@ -30,10 +30,19 @@ Resize between laptop and narrow phone widths without changing the logical game 
 ## Functional checks
 
 ```sh
-node --experimental-vm-modules --test scripts/test-movement.mjs scripts/test-controls.mjs scripts/test-simulation.mjs
+node --experimental-vm-modules --test scripts/test-movement.mjs scripts/test-controls.mjs scripts/test-simulation.mjs scripts/test-fairness.mjs
 ```
 
-Checks cover input timing/cancellation/focus, actual UI event routing and ending/retry presentation in an isolated DOM stub, and collision/career/clock rules. Simulation supports module-only initial-state scenarios for controlled QA; no development controls appear in the public interface. Browser and physical-device observations are recorded separately in the development log.
+Checks cover input timing/cancellation/focus, actual UI event routing and ending/retry presentation in an isolated DOM stub, and collision/career/clock rules. Simulation supports module-only initial-state scenarios for controlled QA; no development controls appear in the public interface. Browser and physical-device observations are recorded separately in the development log. The spawn guard uses independent copies of the real movement model to check reaction, transit, and waiting paths without relying on damage protection.
+
+## Balance diagnostics
+
+```sh
+node scripts/measure-balance.mjs
+node scripts/measure-balance.mjs --details --seeds=20
+```
+
+These seeded movement policies check feasibility, pacing, lane coverage, and recovery. They use exact visible-object geometry and are not human playtest results. See [the Stage 4 balance report](BALANCE_REPORT.md) for before/after results and retained tuning values.
 
 ## Project references
 

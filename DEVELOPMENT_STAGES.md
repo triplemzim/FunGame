@@ -22,7 +22,7 @@ Statuses: **Not started → In progress → Ready for playtest → Complete**. U
 | 1 — Movement | Graduate intern moves across five lanes | Does controlling the character feel responsive? | Complete |
 | 2 — Catch and dodge | Basic timed arcade run with retry | Are catches satisfying and hazards understandable? | Complete |
 | 3 — Complete career | All ranks, consequences, and endings | Can the whole game run correctly? | Complete |
-| 4 — Fairness and pacing | Balanced, repeatable three-minute challenge | Is success earned and another attempt appealing? | Not started |
+| 4 — Fairness and pacing | Balanced, repeatable three-minute challenge | Is success earned and another attempt appealing? | In progress |
 | 5 — Personality and craft | Cohesive art, reactions, sound, and comedy | Does each interaction show care? | Not started |
 | 6 — Fresh-player refinement | Revised build after observed play | Do new players enjoy it without coaching? | Not started |
 | 7 — Judge release | Verified stable Sites release and demo | Is the experience ready for judging? | Not started |
@@ -269,4 +269,4 @@ Feedback to address:
 Next stage:
 ```
 
-Implementation status: Stages 0 and 1 are complete. The user authorized continuing without another approval gate, then requested an MVP-first pass. Stages 2 and 3 were completed together for the playable MVP, published as Sites version 4; deferred polish is tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md). See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence and restart notes.
+Implementation status: Stages 0 and 1 are complete. The user authorized continuing without another approval gate, then requested an MVP-first pass. Stages 2 and 3 were completed together for the playable MVP, published as Sites version 4; Stage 4 fairness and pacing is in progress, with measurements in [BALANCE_REPORT.md](BALANCE_REPORT.md); deferred polish is tracked in [IMPROVEMENTS.md](IMPROVEMENTS.md). See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for checkpoint evidence and restart notes.

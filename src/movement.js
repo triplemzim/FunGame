@@ -7,7 +7,7 @@ export const TRANSITION_MS = 110;
 export const REPEAT_MS = 180;
 
 // One model serves keyboard and pointer input. Time advances only when updated.
-export function createMovement() {
+function movementModel(initialState = null) {
   const held = new Map();
   let lane;
   let x;
@@ -103,6 +103,20 @@ export function createMovement() {
     return { lane, x, moving: direction !== 0, direction };
   }
 
-  reset();
-  return { reset, press, release, clearInput, update, snapshot };
+  if (initialState) {
+    for (const [source, direction] of initialState.held) held.set(source, direction);
+    lane = initialState.lane;
+    x = initialState.x;
+    fromX = initialState.fromX;
+    transitionElapsed = initialState.transitionElapsed;
+    repeatElapsed = initialState.repeatElapsed;
+  } else reset();
+
+  function clone() {
+    return movementModel({ held: [...held], lane, x, fromX, transitionElapsed, repeatElapsed });
+  }
+
+  return { reset, press, release, clearInput, update, snapshot, clone };
 }
+
+export function createMovement() { return movementModel(); }
