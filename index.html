@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#191b36" />
+    <meta name="description" content="Career Catcher: catch career wins, dodge office disasters, and climb to CEO. An office arcade preview." />
+    <title>Career Catcher — Your career is looking up</title>
+    <link rel="icon" href="./assets/images/briefcase.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <script type="module" src="./src/main.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="brand-header">
+        <a class="brand" href="./" aria-label="Career Catcher home"><span class="brand-icon" aria-hidden="true">↗</span><span>CAREER CATCHER<span class="brand-caption">A LITTLE AMBITION GOES A LONG WAY.</span></span></a>
+        <span class="preview-badge">Office preview</span>
+      </header>
+
+      <section class="game-card" aria-labelledby="game-title">
+        <div class="cabinet-heading">
+          <div class="floor-label"><span class="status-dot" aria-hidden="true"></span> FLOOR 01 <span class="floor-divider" aria-hidden="true">/</span> THE BEGINNING</div>
+          <span class="company-name">BUSINESS AS USUAL, INC.</span>
+        </div>
+        <div class="cabinet-body">
+          <div class="office-scene">
+            <div class="scene-heading"><span class="employee-label">YOUR CURRENT POSITION</span><span class="rank-label">Intern</span></div>
+            <canvas id="office-canvas" role="img" aria-label="A cheerful intern at a small desk, looking toward the corner office in a lavender city office.">An intern's first desk in a bright city office.</canvas>
+            <div class="scene-caption"><span class="scene-caption-dot" aria-hidden="true"></span><span id="scene-caption">Small desk. Big ambitions.</span><span class="scene-number" aria-hidden="true">01</span></div>
+          </div>
+          <div class="welcome-panel">
+            <div class="welcome-copy">
+              <p class="eyebrow" id="state-label">YOUR NEXT BIG THING</p>
+              <h1 id="game-title">Your career<br /> is looking <em>up.</em></h1>
+              <p class="objective">Catch career wins. Dodge office disasters. Climb all the way to CEO.</p>
+            </div>
+            <div class="workday-message" aria-live="polite" aria-atomic="true">
+              <span class="message-icon" aria-hidden="true">✦</span>
+              <div><h2 id="state-title">Ready for your first day?</h2><p id="state-description">The corner office has to start somewhere.</p></div>
+            </div>
+            <div class="actions">
+              <button class="primary-button" id="start-button" type="button"><span>Start Work</span><span aria-hidden="true">↗</span></button>
+              <button class="primary-button reset-button" id="reset-button" type="button" hidden><span>Reset Workday</span><span aria-hidden="true">↻</span></button>
+              <p class="action-note" id="action-note">Clock in. Make yourself at home.</p>
+            </div>
+          </div>
+        </div>
+        <ul class="item-legend" aria-label="Meet the office essentials">
+          <li><span class="legend-icon reward-icon" aria-hidden="true">✦</span><span><strong>Career wins</strong><span class="legend-description">Catch the good stuff</span></span></li>
+          <li><span class="legend-icon coffee-icon" aria-hidden="true">☕</span><span><strong>Coffee</strong><span class="legend-description">A little reputation boost</span></span></li>
+          <li><span class="legend-icon hazard-icon" aria-hidden="true">!</span><span><strong>Office disasters</strong><span class="legend-description">Politely step aside</span></span></li>
+        </ul>
+      </section>
+      <footer class="app-footer"><span>FROM INTERN TO <span class="footer-ceo">CEO.</span></span><span>ONE WORKDAY AT A TIME.</span></footer>
+      <noscript><p class="noscript-message">Enable JavaScript to start and reset your workday.</p></noscript>
+    </main>
+  </body>
+</html>
