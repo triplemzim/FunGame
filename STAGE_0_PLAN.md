@@ -2,7 +2,7 @@
 
 Status: Approved by the user on 24 October 2026. Stage 0 is **In progress**.
 
-Build the **Foundation and Sites** checkpoint from [DEVELOPMENT_STAGES.md](DEVELOPMENT_STAGES.md): a responsive office shell with working Start Work and Reset actions, packaged and verified in the actual ChatGPT Sites viewing experience. [GAME_PLAN.md](GAME_PLAN.md) remains the source of truth for design and future game rules.
+Build the **Foundation and Sites** checkpoint from [DEVELOPMENT_STAGES.md](DEVELOPMENT_STAGES.md): a responsive tech-office shell with working Start First Day and Reset actions, packaged and verified in the actual ChatGPT Sites viewing experience. [GAME_PLAN.md](GAME_PLAN.md) remains the source of truth for design and future game rules.
 
 ## Current baseline
 
@@ -18,9 +18,11 @@ Two sub-agents reviewed Stage 0 scope and acceptance checks. This approval reque
 
 ## Scope and visible behavior
 
-Use buildless HTML, CSS, and JavaScript, with DOM buttons and a Canvas 2D office surface. Follow the planned navy, lavender, lime, coral, and amber palette. Use simple local shapes and a stationary employee placeholder; final artwork comes later.
+The current game and development-stage documents specify software and agentic engineering as the theme. The shell follows their updated first-day action and graduate-intern cues without adding gameplay.
 
-The ready screen contains the title, a one-line catch-and-dodge objective, compact reward/coffee/hazard examples, the office surface, and a prominent **Start Work** button. Starting visibly changes the shell to a workday-started state and exposes **Reset**. Reset returns to the original ready screen without reloading. Reload also starts at ready. Do not imply that the full arcade loop is playable yet.
+Use buildless HTML, CSS, and JavaScript, with DOM buttons and a Canvas 2D office surface. Follow the planned navy, lavender, lime, coral, and amber palette. Use simple local shapes and a stationary CS-graduate intern with a lanyard and stickered laptop; final artwork comes later.
+
+The ready screen contains the title, a CS-graduate/first-day cue, a one-line catch-and-dodge objective, compact reward/coffee/hazard examples, the office surface, and a prominent **Start First Day** button. Starting visibly changes the shell to a workday-started state and exposes **Reset**. Reset returns to the original ready screen without reloading. Reload also starts at ready. Do not imply that the full arcade loop is playable yet.
 
 Use real, labeled buttons with visible focus and keyboard activation. Keep the main action visible at laptop and narrow phone sizes without requiring a scroll through introductory content. Resize the canvas for its CSS bounds and device pixel ratio. Register listeners once; state changes update the existing interface.
 
@@ -82,7 +84,7 @@ Use an independent review after integration to check scope, reset behavior, and 
 | Check | Passing evidence |
 | --- | --- |
 | Complete package | Freshly generated `dist/` contains every referenced script, style, and asset; browser loads have no missing files or application errors. |
-| Start and reset | Ready → Start Work → started → Reset → ready works for at least five consecutive cycles, with one visible interface and one response per activation. |
+| Start and reset | Ready → Start First Day → started → Reset → ready works for at least five consecutive cycles, with one visible interface and one response per activation. |
 | Reload | Reload from ready and started produces a clean ready screen. |
 | Accessible actions | Buttons work with pointer/tap and native keyboard activation; focus is visible. |
 | Responsive layout | At a laptop viewport and approximately 375 × 667 CSS pixels, the office surface and main action are usable without introductory scrolling or horizontal overflow. Record actual test sizes. |

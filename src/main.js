@@ -15,10 +15,10 @@ function setState(nextState, { moveFocus = false } = {}) {
   state = nextState;
   const started = state === 'playing';
   document.body.dataset.state = state;
-  label.textContent = started ? 'YOUR FIRST CHAPTER' : 'YOUR NEXT BIG THING';
-  title.textContent = started ? "You're hired. Settle in." : 'Ready for your first day?';
-  description.textContent = started ? 'Your first desk. A fresh start. Big things ahead.' : 'The corner office has to start somewhere.';
-  sceneCaption.textContent = started ? 'Officially part of the furniture.' : 'Small desk. Big ambitions.';
+  label.textContent = started ? 'YOUR FIRST COMMIT' : 'YOUR NEXT BIG THING';
+  title.textContent = started ? "You're in. Welcome to the team." : 'Ready for your first day?';
+  description.textContent = started ? "First day. Don't deploy on Friday." : 'Degree acquired. Production access pending.';
+  sceneCaption.textContent = started ? 'Your first PR starts with a coffee.' : 'New degree. First desk. Big ambitions.';
   actionNote.textContent = started ? 'Need a fresh start? Reset your workday.' : 'Clock in. Make yourself at home.';
   startButton.hidden = started;
   resetButton.hidden = !started;

@@ -98,13 +98,14 @@ export function createOfficeShell(canvas) {
     text('SOMEDAY.', 548, doorY + 65, 5.8, '#9684a9', '600', 'center');
     ellipse(574, floor - 73, 3, 3, '#e9d696', '#7d6c86', 1);
 
-    // Noticeboard: the familiar office motivational poster.
+    // A quiet CI dashboard: green builds are the new motivational poster.
     ctx.save(); ctx.translate(467, 51); ctx.rotate(.035);
     round(-18, -17, 36, 49, 1, '#eee8de', '#8e7ba6', 1.5);
-    line(-9, 3, 7, -5, '#a18ac4', 2);
-    line(7, -5, 7, 1, '#a18ac4', 2); line(7, -5, 1, -5, '#a18ac4', 2);
-    text('UPWARD.', 0, 17, 4.8, '#8b799e', '700', 'center');
-    text('EVENTUALLY.', 0, 24, 4.1, '#aa99b7', '500', 'center');
+    round(-13, -8, 26, 20, 2, '#4b425e', null);
+    ellipse(-8, -3, 1.3, 1.3, '#e2bd8c'); ellipse(-3, -3, 1.3, 1.3, '#bfa9d8'); ellipse(2, -3, 1.3, 1.3, '#d8ee9b');
+    line(-5, 5, -1, 8, '#d8ee9b', 1.8); line(-1, 8, 6, 1, '#d8ee9b', 1.8);
+    text('CI: PASS', 0, 21, 4.8, '#817192', '700', 'center');
+    text('FOR NOW.', 0, 27, 4.1, '#a08eb0', '500', 'center');
     ellipse(0, -13, 1.5, 1.5, '#d6958b');
     ctx.restore();
 
@@ -138,11 +139,14 @@ export function createOfficeShell(canvas) {
 
     path([[-35, -155], [-16, -166], [31, -166], [53, -151], [61, -92], [-42, -92]], '#f1e5cc', ink, 2.5);
     path([[-12, -166], [6, -143], [25, -166]], '#faf3e4', '#b5a68f', 1.5);
-    path([[0, -150], [8, -150], [13, -108], [6, -101], [-1, -108]], '#9b8ac2', '#74628d', 1.5);
+    // A graduate's first employee lanyard, replacing the corporate necktie.
+    line(-10, -164, 24, -145, '#8673af', 3.5);
+    line(30, -164, 24, -145, '#8673af', 3.5);
     line(32, -149, 39, -122, '#b5a68f', 1.5);
-    // Tiny first-day badge changes on Start Work.
-    round(24, -139, 23, 16, 2, started ? '#dbe9b0' : '#e5dcec', '#a697ad', 1);
-    text(started ? 'HI!' : 'NEW', 35, -129, 5.6, '#6c647b', '700', 'center');
+    // The first-day ID becomes a friendly hello after clocking in.
+    round(11, -145, 27, 22, 3, started ? '#dbe9b0' : '#f1eaf8', '#84718e', 1.2);
+    round(11, -145, 27, 6, [3, 3, 0, 0], '#ac96c5', null);
+    text(started ? 'HI!' : 'NEW', 24.5, -129, 6.8, '#6c597e', '750', 'center');
 
     round(-4, -182, 24, 25, 7, '#dca480', ink, 2);
     ellipse(8, -210, 36, 40, '#e7b895', ink, 2.3);
@@ -170,12 +174,16 @@ export function createOfficeShell(canvas) {
     line(-74, -114, -40, -114, '#bcb0b9', 1);
     ctx.save(); ctx.translate(-74, -118); ctx.rotate(-.09);
     round(-23, -4, 44, 6, 1, '#b9c6b7', '#7b8286', 1); ctx.restore();
+    // Set the laptop slightly aside so the new hire's lanyard stays visible.
+    ctx.save(); ctx.translate(-50, 0);
     path([[-44, -169], [48, -169], [62, -111], [-31, -111]], '#aea3c8', ink, 2.2);
     path([[-40, -165], [44, -165], [55, -116], [-28, -116]], '#bdb3d4', null);
-    ellipse(8, -141, 5, 5, '#d9d0e6');
+    round(-22, -157, 35, 24, 4, '#4e455f', '#7c6a94', 1);
+    text('</>', -4, -140, 13, '#d8ee9b', '750', 'center');
     path([[-31, -111], [62, -111], [71, -106], [-41, -106]], '#d7cee1', ink, 1.5);
     round(14, -151, 22, 10, 1, '#e8e4bb', '#b6ab96', .7);
     text('you got this', 25, -144, 3.3, '#8d8082', '600', 'center');
+    ctx.restore();
     // Hands rest at the desk, rather than suggesting active movement.
     ellipse(-48, -120, 13, 7, '#e7b895', ink, 1.5); ellipse(76, -120, 13, 7, '#e7b895', ink, 1.5);
     ellipse(112, -118, 21, 4, '#ad827755');
@@ -191,8 +199,16 @@ export function createOfficeShell(canvas) {
     round(-180, -43, 43, 41, 2, '#bba68e', '#7f7182', 1.5);
     path([[-183, -47], [-139, -47], [-137, -39], [-181, -39]], '#cbb9a0', '#7f7182', 1.5);
     line(-161, -44, -159, -5, '#a4917f', 4);
-    text('DESK', -158, -24, 5, '#847384', '650', 'center');
-    text('THINGS', -158, -17, 4.5, '#847384', '600', 'center');
+    text('GRAD', -158, -24, 5, '#847384', '650', 'center');
+    text('GEAR', -158, -17, 4.5, '#847384', '600', 'center');
+    // Degree acquired: a rolled diploma with its still-pristine ribbon.
+    ctx.save(); ctx.translate(-158, -49); ctx.rotate(-.18);
+    round(-31, -12, 61, 13, 5, '#f3ead7', '#a28a8f', 1.2);
+    ellipse(-29, -5.5, 4, 6, '#fff7e5', '#a28a8f', 1);
+    ellipse(-29, -5.5, 1.5, 2.8, '#d8c8b5');
+    path([[0, -12], [7, -12], [7, 1], [0, 1]], '#c98591', '#a5647b', .7);
+    path([[1, 0], [-2, 8], [3, 5], [7, 9], [7, 0]], '#c98591', '#a5647b', .7);
+    ctx.restore();
     ctx.restore();
   }
 
