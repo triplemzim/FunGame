@@ -177,7 +177,7 @@ Next: Deliver sound, then refine engagement using the recorded player feedback.
 
 Date: 24 October 2026 (Asia/Singapore).
 
-Stage and status: In progress. Sound implementation and local checks passed; public sound release pending. Other Stage 5 presentation work remains deferred.
+Stage and status: In progress. Sound implementation, local checks, and public audio activation checks passed. Other Stage 5 presentation work remains deferred.
 
 What changed: Short synthesized cues for build catches, coffee, bug hits, promotions, demotions, and the three endings. Promotion uses a rising fanfare; bug hits use a low descending tone. Major events take priority over routine catches. A visible Sound On/Off button remembers the preference. Audio starts only after a Start/Resume/unmute gesture; pause, reset, and mute stop current notes. No remote audio assets or additional dependencies are required.
 
@@ -189,3 +189,7 @@ Checks and evidence:
 - Mute persisted through reload; the QA preference was restored to unmuted. No captured browser warnings/errors occurred. These are browser audio activation checks, not a claim about hardware speaker volume.
 
 What to try: Start with Sound On, catch a build, catch a bug, and earn a promotion. Toggle Sound Off during play and reload to check the saved preference. Missing builds or coffee still has no penalty.
+
+Source checkpoint: `bfd7217465a50ea6e15dda38215d6ab23619c6e4`, pushed to GitHub `codex/stage-0-foundation` and the Sites-managed source. Public Sites version **6**, saved version ID `appgprj_6adc7aeef0c08191b984ae4517b08e4a~appgver_09f6156824e08191b8897a16d49a88f3`, deployment ID `appgdep_6adc8d68abe08191ae7d4fb46468554a`. Deployment succeeded at https://career-catcher-fungame.tenderstoat19.chatgpt.site. The release archive contains 11 static files plus the hosting manifest. Audience remains public; version 5 is retained as the previous checkpoint.
+
+Hosted verification: The existing public URL loaded the Sound On control. Start entered playing and reported audio running; no browser warnings/errors were captured. The sound controller and event routing were independently reviewed for promotion and bug-hit playback. The user’s existing local run was not reset during this verification. Screenshot evidence: career-catcher-sound.png in the task visualization folder. Refresh an already-open game to load this version, then select Start with Sound On.

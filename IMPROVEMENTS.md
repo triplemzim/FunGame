@@ -12,7 +12,7 @@ The user requested an MVP-first pass on 24 October 2026. The complete MVP now im
 | High | Test physical phone touch, multi-touch cancellation, and focus interruption | Confirm real-device input behavior beyond desktop pointer checks | Deferred; shared model and input-routing checks exist |
 | Medium | Richer employee reactions, movement lean, catch pop, and rank celebrations | Make catches and consequences feel satisfying | Deferred; keep simple matching feedback in MVP |
 | Medium | Cohesive final item art and all seven visual variants | Improve category recognition and personality | Deferred; use clear category placeholders first |
-| High | Event sound cues, visible mute, and remembered preference | Make catches, hits, and career events audible | Implemented locally; public sound release pending |
+| High | Event sound cues, visible mute, and remembered preference | Make catches, hits, and career events audible | Implemented and published in public version 6 |
 | Medium | More event-specific engineering jokes and prioritized dialogue | Add comedy without interrupting play | Deferred; concise core messages first |
 | Medium | Outcome-specific performance reviews and local personal best | Give each ending personality and encourage retry | Deferred; accurate basic results first |
 | Medium | Expanded reduced-motion and low-trust presentation review | Keep effects readable and comfortable | Deferred; retain existing reduced-motion support |
@@ -36,7 +36,7 @@ The user requested an MVP-first pass on 24 October 2026. The complete MVP now im
 
 ## Player engagement feedback
 
-The player reported that repeating only builds, coffee, and bugs feels boring. They suggested consequences for missed good items, including a popup and demotion after three misses in a row, and requested sound. Sound is being implemented immediately. The miss-rule suggestions below are design proposals, not current runtime behavior.
+The player reported that repeating only builds, coffee, and bugs feels boring. They suggested consequences for missed good items, including a popup and demotion after three misses in a row, and requested sound. Sound is implemented and published in public version 6. The miss-rule suggestions below are design proposals, not current runtime behavior.
 
 - **Proposed miss warning:** three consecutive missed builds trigger a brief HR warning and a Team trust penalty. A build catch resets the counter. Keep coffee optional, especially at full trust. Use the existing zero-trust demotion/dismissal rules initially; a forced demotion after exactly three misses needs fair-catch and Intern behavior defined.
 - **Proposed earned action:** consecutive catches charge a Debug ability; a keyboard/touch action spends it to clear an approaching bug. This adds a decision the player controls.
