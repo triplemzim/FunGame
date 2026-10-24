@@ -1,6 +1,6 @@
 # Career Catcher Stage 0 Implementation Plan
 
-Status: Approved by the user on 24 October 2026. Stage 0 is **Ready for playtest**; signed-in hosted verification is pending. See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md).
+Status: Approved by the user on 24 October 2026. Stage 0 is **Complete**. The user subsequently authorized public access; hosted in-app checks passed without sign-in. See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md).
 
 Build the **Foundation and Sites** checkpoint from [DEVELOPMENT_STAGES.md](DEVELOPMENT_STAGES.md): a responsive tech-office shell with working Start First Day and Reset actions, packaged and verified in the actual ChatGPT Sites viewing experience. [GAME_PLAN.md](GAME_PLAN.md) remains the source of truth for design and future game rules.
 
